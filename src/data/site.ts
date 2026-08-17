@@ -49,6 +49,7 @@ export const projects: {
   tags: string[];
   repo: string;
   demo?: string;
+  shot?: { src: string; alt: string };
 }[] = [
   {
     id: 'ledgerline',
@@ -56,6 +57,7 @@ export const projects: {
     tags: ['Vanilla JS', 'Offline-first'],
     repo: 'https://github.com/aldorizona10-glitch/ledgerline-invoice',
     demo: 'https://aldorizona10-glitch.github.io/ledgerline-invoice/',
+    shot: { src: '/shots/ledgerline', alt: 'The Ledgerline editor with an invoice being composed beside its live preview.' },
   },
   {
     id: 'injectlab',
@@ -63,6 +65,7 @@ export const projects: {
     tags: ['LLM security', 'Training'],
     repo: 'https://github.com/aldorizona10-glitch/injectlab',
     demo: 'https://aldorizona10-glitch.github.io/injectlab/',
+    shot: { src: '/shots/injectlab', alt: 'The InjectLab console showing a blocked attempt and the defence layer that caught it.' },
   },
   {
     id: 'quickops',
@@ -71,11 +74,12 @@ export const projects: {
     repo: 'https://github.com/aldorizona10-glitch/quickops-ai',
   },
   {
+    // No demo link: the hosted instance loads but its sign-in endpoint returns
+    // a server error, so "Live" would send visitors to something they cannot use.
     id: 'bugbox',
     name: 'BugBox',
     tags: ['TypeScript', 'Testing'],
     repo: 'https://github.com/aldorizona10-glitch/bugbox',
-    demo: 'https://bugbox-eta.vercel.app',
   },
 ];
 

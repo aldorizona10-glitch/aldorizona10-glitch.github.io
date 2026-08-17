@@ -8,12 +8,27 @@ interface Props {
 }
 const { lang } = Astro.props;
 const c = t(lang);
+
+// Column count is chosen so the last row is always full. Four items in a
+// three-column grid would leave two dead cells.
+const n = projects.length;
+const cols = n <= 1 ? 1 : n === 3 || n === 5 || n === 6 ? 3 : 2;
 ---
 
-<div class="works rise" style={`--cols:${Math.min(projects.length, 3)}`}>
+<div class="works rise" style={`--cols:${cols}`}>
   {
     projects.map((p, i) => (
-      <article class="work">
+      <article class:list={['work', { 'work--shot': p.shot }]}>
+        {
+          p.shot && (
+            <a class="work__shot" href={p.demo ?? p.repo} rel="noopener" target="_blank" tabindex="-1" aria-hidden="true">
+              <picture>
+                <source srcset={`${p.shot.src}.webp`} type="image/webp" />
+                <img src={`${p.shot.src}.jpg`} alt={p.shot.alt} width="800" height="500" loading="lazy" decoding="async" />
+              </picture>
+            </a>
+          )
+        }
         <span class="work__idx">{String(i + 1).padStart(2, '0')}</span>
         <h3 class="work__name">{p.name}</h3>
         <p class="work__blurb">{c.projects.blurbs[p.id]}</p>
@@ -49,6 +64,32 @@ const c = t(lang);
     flex-direction: column;
     gap: 11px;
     transition: background-color 260ms var(--ease-out);
+  }
+  .work--shot {
+    padding-top: 0;
+  }
+  /* Real product screenshots, not mock UI drawn from divs. */
+  .work__shot {
+    display: block;
+    margin: 0 -28px 18px;
+    border-bottom: 1px solid var(--hair-soft);
+    overflow: hidden;
+    background: var(--ink-deep);
+  }
+  .work__shot img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    /* The shots are bright next to an ink page; settle them down until hover. */
+    opacity: 0.72;
+    filter: saturate(0.85);
+    transition:
+      opacity var(--dur-hover) ease,
+      filter var(--dur-hover) ease,
+      transform 420ms var(--ease-out);
   }
   .work__idx {
     font-family: var(--mono);
@@ -110,6 +151,11 @@ const c = t(lang);
     .work:hover {
       background-color: var(--ink-raise);
     }
+    .work:hover .work__shot img {
+      opacity: 1;
+      filter: saturate(1);
+      transform: scale(1.02);
+    }
     .work__link:hover {
       color: var(--bone);
       border-color: var(--gold);
@@ -122,10 +168,12 @@ const c = t(lang);
   }
   @media (prefers-reduced-motion: reduce) {
     .work,
-    .work__link {
+    .work__link,
+    .work__shot img {
       transition: none;
     }
-    .work__link:active {
+    .work__link:active,
+    .work:hover .work__shot img {
       transform: none;
     }
   }
