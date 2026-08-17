@@ -57,7 +57,7 @@ type Dict = {
     closingTail: string;
     allRepos: string;
   };
-  projects: { mark: string; railLabel: string; title: string; intro: string; blurbs: Record<ProjectId, string>; allRepos: string };
+  projects: { mark: string; railLabel: string; title: string; intro: string; blurbs: Record<ProjectId, string>; repoLabel: string; demoLabel: string; allRepos: string };
   about: {
     mark: string;
     railLabel: string;
@@ -113,7 +113,7 @@ const en: Dict = {
     projects: {
       title: 'Projects, Aldo Rizona',
       description:
-        'Small tools, finished and usable: an in-browser invoice studio, a prompt-injection training sandbox, ops automation, and data-quality agents.',
+        'Published work only: an ops automation kit and a bug tracker hardened by an automated verification loop. Source and live demo linked for each.',
     },
     about: {
       title: 'About, Aldo Rizona',
@@ -135,7 +135,7 @@ const en: Dict = {
     rows: [
       { page: 'security', mark: 'Pasal I', title: 'Security', teaser: 'Two findings on two AI platforms. One rewarded, one published. Both verifiable by a stranger.', stat: '$2,500 + 1 published' },
       { page: 'open-source', mark: 'Pasal II', title: 'Open source', teaser: 'Seven pull requests merged into repositories I do not own, three of them into WordPress.', stat: '7 merged' },
-      { page: 'projects', mark: 'Pasal III', title: 'Projects', teaser: 'Small tools, finished and usable. Most single-file and dependency-free.', stat: '6 shipped' },
+      { page: 'projects', mark: 'Pasal III', title: 'Projects', teaser: 'A short list on purpose. Only published work, each with source you can open.', stat: '2 published' },
       { page: 'about', mark: 'Pasal IV', title: 'About', teaser: 'A final-year law student who reads software the way he reads statutes.', stat: 'The reasoning' },
     ],
   },
@@ -216,21 +216,15 @@ const en: Dict = {
     railLabel: 'Things<br />I built',
     title: 'Built to <em>ship</em>, not to demo',
     intro:
-      'Small tools, finished and usable. Most are single-file and dependency-free, because the fastest way to keep software trustworthy is to give it less surface.',
+      'A short list on purpose. Only work that is published, still standing, and open for you to judge appears here.',
     blurbs: {
-      ledgerline:
-        'A privacy-first invoice studio that runs entirely in the browser. Build an invoice, print a clean PDF, upload nothing. One file, zero dependencies.',
-      injectlab:
-        'A sandbox for practising prompt injection against simulated defence layers that explain why they blocked you. Built to teach diagnosis, not to hand over payloads.',
       quickops:
         'A zero-budget ops kit for a one-person shop: outreach, reply monitoring, and delivery workflows wired together so one operator runs like a team.',
-      datahub:
-        'An agent that watches datasets and flags quality and lineage problems before they spread downstream. Built for the DataHub agent hackathon.',
-      codelens:
-        'A review assistant that reads a diff and surfaces what a reviewer would flag, packaged as a lightweight service.',
       bugbox:
         'A bug tracker hardened against its own edge cases through an automated verification loop. The tracker and the tests grew together.',
     },
+    repoLabel: 'Source',
+    demoLabel: 'Live',
     allRepos: 'All repositories on GitHub',
   },
   about: {
@@ -303,7 +297,7 @@ const id: Dict = {
     projects: {
       title: 'Karya, Aldo Rizona',
       description:
-        'Perkakas kecil yang selesai dan bisa dipakai: studio invoice di browser, sandbox latihan prompt injection, otomasi operasional, dan agen kualitas data.',
+        'Hanya karya yang sudah terbit: kit otomasi operasional dan pelacak bug yang dikeraskan lewat loop verifikasi otomatis. Kode dan demo tertaut untuk masing-masing.',
     },
     about: {
       title: 'Tentang, Aldo Rizona',
@@ -325,7 +319,7 @@ const id: Dict = {
     rows: [
       { page: 'security', mark: 'Pasal I', title: 'Keamanan', teaser: 'Dua temuan di dua platform AI. Satu dibayar, satu dipublikasikan. Keduanya bisa dicek orang lain.', stat: '$2.500 + 1 terbit' },
       { page: 'open-source', mark: 'Pasal II', title: 'Open source', teaser: 'Tujuh pull request di-merge ke repositori milik pihak lain, tiga di antaranya ke WordPress.', stat: '7 di-merge' },
-      { page: 'projects', mark: 'Pasal III', title: 'Karya', teaser: 'Perkakas kecil yang selesai dan bisa dipakai. Sebagian besar satu berkas, tanpa dependensi.', stat: '6 rilis' },
+      { page: 'projects', mark: 'Pasal III', title: 'Karya', teaser: 'Daftarnya sengaja pendek. Hanya karya terbit, masing-masing dengan kode yang bisa dibuka.', stat: '2 terbit' },
       { page: 'about', mark: 'Pasal IV', title: 'Tentang', teaser: 'Mahasiswa hukum tingkat akhir yang membaca perangkat lunak seperti membaca undang-undang.', stat: 'Alasannya' },
     ],
   },
@@ -406,21 +400,15 @@ const id: Dict = {
     railLabel: 'Yang saya<br />bangun',
     title: 'Dibuat untuk <em>dipakai</em>, bukan dipamerkan',
     intro:
-      'Perkakas kecil yang selesai dan bisa dipakai. Sebagian besar satu berkas dan tanpa dependensi, karena cara tercepat menjaga perangkat lunak tetap tepercaya adalah mengurangi permukaannya.',
+      'Daftarnya sengaja pendek. Hanya karya yang sudah terbit, masih berdiri, dan terbuka untuk Anda nilai yang masuk ke sini.',
     blurbs: {
-      ledgerline:
-        'Studio invoice yang mengutamakan privasi dan berjalan sepenuhnya di browser. Susun invoice, cetak PDF yang rapi, tanpa mengunggah apa pun. Satu berkas, nol dependensi.',
-      injectlab:
-        'Sandbox untuk melatih prompt injection melawan lapisan pertahanan simulasi yang menjelaskan alasan mereka memblokir. Dibuat untuk mengajarkan diagnosis, bukan membagikan payload.',
       quickops:
         'Kit operasional tanpa modal untuk usaha satu orang: penjangkauan, pemantauan balasan, dan alur pengiriman yang dirangkai supaya satu orang bisa bekerja seperti satu tim.',
-      datahub:
-        'Agen yang mengawasi dataset dan menandai masalah kualitas serta lineage sebelum menyebar ke hilir. Dibuat untuk hackathon agent DataHub.',
-      codelens:
-        'Asisten review yang membaca diff dan memunculkan hal-hal yang akan ditandai seorang reviewer, dikemas sebagai layanan ringan.',
       bugbox:
         'Pelacak bug yang dikeraskan terhadap kasus tepinya sendiri lewat loop verifikasi otomatis. Pelacak dan tesnya tumbuh bersama.',
     },
+    repoLabel: 'Kode',
+    demoLabel: 'Live',
     allRepos: 'Semua repositori di GitHub',
   },
   about: {

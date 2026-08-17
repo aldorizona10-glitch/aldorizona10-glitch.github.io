@@ -38,21 +38,31 @@ export const pullRequests: PR[] = [
   { repo: 'arrow-py/arrow', number: '#1335', url: 'https://github.com/arrow-py/arrow/pull/1335', merged: false, group: 'other' },
 ];
 
-export type ProjectId =
-  | 'ledgerline'
-  | 'injectlab'
-  | 'quickops'
-  | 'datahub'
-  | 'codelens'
-  | 'bugbox';
+export type ProjectId = 'quickops' | 'bugbox';
 
-export const projects: { id: ProjectId; name: string; tags: string[] }[] = [
-  { id: 'ledgerline', name: 'Ledgerline', tags: ['Vanilla JS', 'Offline-first'] },
-  { id: 'injectlab', name: 'InjectLab', tags: ['LLM security', 'Training'] },
-  { id: 'quickops', name: 'QuickOps AI', tags: ['Python', 'Automation'] },
-  { id: 'datahub', name: 'DataHub Health Guardian', tags: ['Python', 'Data quality'] },
-  { id: 'codelens', name: 'CodeLens AI', tags: ['LLM', 'Code review'] },
-  { id: 'bugbox', name: 'BugBox', tags: ['TypeScript', 'Testing'] },
+// Admission rule, deliberately strict: a project appears here only if a
+// stranger can open it and judge it. Anything unpublished, or thin enough
+// to read as abandoned, is left off rather than padding the list.
+export const projects: {
+  id: ProjectId;
+  name: string;
+  tags: string[];
+  repo: string;
+  demo?: string;
+}[] = [
+  {
+    id: 'quickops',
+    name: 'QuickOps AI',
+    tags: ['Python', 'Automation'],
+    repo: 'https://github.com/aldorizona10-glitch/quickops-ai',
+  },
+  {
+    id: 'bugbox',
+    name: 'BugBox',
+    tags: ['TypeScript', 'Testing'],
+    repo: 'https://github.com/aldorizona10-glitch/bugbox',
+    demo: 'https://bugbox-eta.vercel.app',
+  },
 ];
 
 export type PressId = 'rework' | 'codepolitan' | 'coursenet' | 'tribun' | 'katasuhukita';

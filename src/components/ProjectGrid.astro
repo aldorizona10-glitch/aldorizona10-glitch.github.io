@@ -10,7 +10,7 @@ const { lang } = Astro.props;
 const c = t(lang);
 ---
 
-<div class="works rise">
+<div class="works rise" style={`--cols:${Math.min(projects.length, 3)}`}>
   {
     projects.map((p, i) => (
       <article class="work">
@@ -18,23 +18,33 @@ const c = t(lang);
         <h3 class="work__name">{p.name}</h3>
         <p class="work__blurb">{c.projects.blurbs[p.id]}</p>
         <span class="work__tags">{p.tags.join(' / ')}</span>
+        <span class="work__links">
+          <a class="work__link" href={p.repo} rel="noopener" target="_blank">
+            {c.projects.repoLabel}
+          </a>
+          {p.demo && (
+            <a class="work__link work__link--demo" href={p.demo} rel="noopener" target="_blank">
+              {c.projects.demoLabel}
+            </a>
+          )}
+        </span>
       </article>
     ))
   }
 </div>
 
 <style>
-  /* Exactly six cells for six projects. No empty tile. */
+  /* Cell count follows item count, so the grid never shows an empty tile. */
   .works {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(var(--cols, 3), 1fr);
     gap: 1px;
     background: var(--hair-soft);
     border: 1px solid var(--hair-soft);
   }
   .work {
     background: var(--ink);
-    padding: 28px 26px 26px;
+    padding: 30px 28px 26px;
     display: flex;
     flex-direction: column;
     gap: 11px;
@@ -50,44 +60,73 @@ const c = t(lang);
   .work__name {
     font-family: var(--display);
     font-weight: 500;
-    font-size: var(--step-1);
+    font-size: var(--step-2);
     line-height: 1.2;
     color: var(--bone);
   }
   .work__blurb {
     margin: 0;
-    font-size: 0.9rem;
-    line-height: 1.6;
+    font-size: 0.94rem;
+    line-height: 1.62;
     color: var(--bone-dim);
+    max-width: 46ch;
   }
   .work__tags {
     margin-top: auto;
-    padding-top: 14px;
+    padding-top: 16px;
     font-family: var(--mono);
     font-size: 0.62rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--bone-faint);
   }
+  .work__links {
+    display: flex;
+    gap: 10px;
+    padding-top: 14px;
+  }
+  .work__link {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+    border: 1px solid var(--hair);
+    padding: 6px 12px;
+    transition:
+      color var(--dur-hover) ease,
+      border-color var(--dur-hover) ease,
+      transform var(--dur-press) var(--ease-out);
+  }
+  .work__link--demo {
+    color: var(--gold-lit);
+    border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+  }
+  .work__link:active {
+    transform: scale(0.96);
+  }
 
   @media (hover: hover) and (pointer: fine) {
     .work:hover {
       background-color: var(--ink-raise);
     }
-  }
-  @media (max-width: 900px) {
-    .works {
-      grid-template-columns: repeat(2, 1fr);
+    .work__link:hover {
+      color: var(--bone);
+      border-color: var(--gold);
     }
   }
-  @media (max-width: 560px) {
+  @media (max-width: 760px) {
     .works {
       grid-template-columns: 1fr;
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .work {
+    .work,
+    .work__link {
       transition: none;
+    }
+    .work__link:active {
+      transform: none;
     }
   }
 </style>
