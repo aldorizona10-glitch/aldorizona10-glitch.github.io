@@ -1,0 +1,55 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+}
+const { eyebrow, title, intro } = Astro.props;
+---
+
+<header class="phead">
+  <div class="shell">
+    <p class="eyebrow rise">{eyebrow}</p>
+    <h1 class="phead__title rise" set:html={title} />
+    {intro && <p class="phead__intro rise">{intro}</p>}
+  </div>
+</header>
+
+<style>
+  .phead {
+    padding-top: clamp(3.5rem, 2rem + 6vw, 6rem);
+    padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 3.5rem);
+    border-bottom: 1px solid var(--hair);
+    position: relative;
+    overflow: hidden;
+  }
+  .phead::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(80% 120% at 10% 0%, rgba(201, 162, 39, 0.06), transparent 55%);
+    pointer-events: none;
+  }
+  .phead .eyebrow {
+    margin-bottom: 20px;
+  }
+  .phead__title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: var(--step-4);
+    line-height: 1;
+    letter-spacing: -0.015em;
+    max-width: 16ch;
+  }
+  .phead__title :global(em) {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .phead__intro {
+    margin-top: 26px;
+    max-width: var(--measure);
+    font-size: var(--step-1);
+    color: var(--bone-dim);
+    line-height: 1.5;
+  }
+</style>

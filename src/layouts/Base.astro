@@ -1,0 +1,80 @@
+---
+// Font faces — self-hosted via @fontsource, bundled at build time (no runtime CDN).
+import '@fontsource/bodoni-moda/latin-400.css';
+import '@fontsource/bodoni-moda/latin-400-italic.css';
+import '@fontsource/bodoni-moda/latin-500.css';
+import '@fontsource/bodoni-moda/latin-500-italic.css';
+import '@fontsource/ibm-plex-sans/latin-300.css';
+import '@fontsource/ibm-plex-sans/latin-400.css';
+import '@fontsource/ibm-plex-sans/latin-500.css';
+import '@fontsource/ibm-plex-sans/latin-600.css';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import '@fontsource/ibm-plex-mono/latin-500.css';
+
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { profile } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? profile.siteUrl).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={profile.name} />
+    <meta name="theme-color" content="#12101A" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={profile.name} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const items = document.querySelectorAll('.rise');
+      if (reduce || !('IntersectionObserver' in window)) {
+        items.forEach((el) => el.classList.add('in'));
+      } else {
+        // Elements already above the fold reveal immediately.
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            });
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.08 }
+        );
+        items.forEach((el, i) => {
+          (el as HTMLElement).style.transitionDelay = `${(i % 5) * 55}ms`;
+          io.observe(el);
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,106 @@
+---
+import { nav, profile } from '../data/site';
+
+const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isActive = (href: string) => {
+  const clean = href.replace(/\/+$/, '') || '/';
+  return clean === here;
+};
+---
+
+<header class="nav">
+  <div class="nav__inner shell">
+    <a class="brand" href="/" aria-label={`${profile.name} — home`}>
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 3 L29 16 L16 29 L3 16 Z" fill="none" stroke="currentColor" stroke-width="1.5" />
+        <path d="M16 11 L21 16 L16 21 L11 16 Z" fill="currentColor" />
+      </svg>
+      <span class="brand__name">{profile.name}</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            class:list={['nav__link', { 'is-active': isActive(item.href) }]}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--ink) 86%, transparent);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--hair-soft);
+  }
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 60px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .brand__mark {
+    width: 20px;
+    height: 20px;
+  }
+  .brand__name {
+    font-family: var(--display);
+    font-size: 1.12rem;
+    color: var(--bone);
+    letter-spacing: -0.01em;
+  }
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, 0.2rem + 2vw, 1.9rem);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav__links::-webkit-scrollbar {
+    display: none;
+  }
+  .nav__link {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+    white-space: nowrap;
+    padding-block: 6px;
+    border-bottom: 1px solid transparent;
+    transition:
+      color 0.25s ease,
+      border-color 0.25s ease;
+  }
+  .nav__link:hover {
+    color: var(--bone);
+  }
+  .nav__link.is-active {
+    color: var(--gold-lit);
+    border-bottom-color: var(--gold);
+  }
+  @media (max-width: 560px) {
+    .brand__name {
+      display: none;
+    }
+  }
+</style>

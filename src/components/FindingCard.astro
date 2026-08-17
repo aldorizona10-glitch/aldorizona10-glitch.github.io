@@ -1,0 +1,151 @@
+---
+import type { Finding } from '../data/site';
+interface Props {
+  finding: Finding;
+}
+const { finding } = Astro.props;
+const specs = [
+  { k: 'Severity', v: finding.severity, hi: true },
+  { k: 'Class', v: finding.cwe },
+  { k: 'Vector', v: finding.vector },
+  { k: 'Platform', v: finding.platform },
+  { k: 'Reported', v: finding.reported },
+  { k: 'Resolution', v: finding.resolution },
+];
+---
+
+<article class="finding rise">
+  <div class="finding__top">
+    <span class="finding__target">{finding.target}</span>
+    <span class:list={['chip', finding.status === 'Rewarded' ? 'chip--gold' : 'chip--sage']}>
+      {finding.award}
+    </span>
+  </div>
+
+  <p class="finding__summary">{finding.summary}</p>
+
+  <dl class="spec">
+    {
+      specs.map((s) => (
+        <div>
+          <dt>{s.k}</dt>
+          <dd class:list={[{ hi: s.hi }]}>{s.v}</dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <p class:list={['finding__detail', { sealed: finding.sealed }]}>{finding.detail}</p>
+
+  <a class="finding__verify" href={finding.verifyUrl} rel="noopener" target="_blank">
+    {finding.verifyLabel} <span aria-hidden="true">→</span>
+  </a>
+</article>
+
+<style>
+  .finding {
+    position: relative;
+    border: 1px solid var(--hair);
+    background: linear-gradient(180deg, rgba(201, 162, 39, 0.045), transparent 60%);
+    padding: clamp(1.5rem, 1rem + 2vw, 2.4rem);
+  }
+  .finding::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 34px;
+    height: 34px;
+    border-top: 2px solid var(--gold);
+    border-left: 2px solid var(--gold);
+  }
+  .finding__top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .finding__target {
+    font-family: var(--display);
+    font-size: var(--step-2);
+    font-weight: 500;
+    color: var(--bone);
+  }
+  .chip {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--hair);
+    padding: 5px 11px;
+  }
+  .chip--gold {
+    color: var(--gold-lit);
+    border-color: color-mix(in srgb, var(--gold) 50%, transparent);
+  }
+  .chip--sage {
+    color: var(--sage);
+    border-color: color-mix(in srgb, var(--sage) 45%, transparent);
+  }
+  .finding__summary {
+    color: var(--bone-dim);
+    max-width: 58ch;
+    margin-bottom: 22px;
+  }
+  .spec {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 18px;
+    border-top: 1px solid var(--hair);
+    padding-top: 20px;
+  }
+  .spec dt {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-bottom: 5px;
+  }
+  .spec dd {
+    font-family: var(--mono);
+    font-size: 0.86rem;
+    color: var(--bone);
+    line-height: 1.4;
+  }
+  .spec dd.hi {
+    color: var(--gold-lit);
+  }
+  .finding__detail {
+    margin-top: 24px;
+    font-size: 0.95rem;
+    color: var(--bone-dim);
+    max-width: 62ch;
+    line-height: 1.65;
+  }
+  .finding__detail.sealed {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--bone-faint);
+    border-left: 2px solid var(--oxblood);
+    padding-left: 16px;
+  }
+  .finding__verify {
+    display: inline-block;
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--bone-dim);
+    border-bottom: 1px solid var(--hair);
+    padding-bottom: 3px;
+    transition:
+      color 0.25s ease,
+      border-color 0.25s ease;
+  }
+  .finding__verify:hover {
+    color: var(--gold-lit);
+    border-color: var(--gold);
+  }
+</style>

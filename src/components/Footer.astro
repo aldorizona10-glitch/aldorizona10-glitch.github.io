@@ -1,0 +1,113 @@
+---
+import { profile } from '../data/site';
+
+const links = [
+  { label: 'Email', value: profile.email, href: `mailto:${profile.email}` },
+  { label: 'GitHub', value: 'github.com/' + profile.githubHandle, href: profile.github },
+  { label: 'HackerOne', value: 'hackerone.com/xauud', href: profile.hackerone },
+  { label: 'huntr', value: 'huntr.com/users/' + profile.githubHandle, href: profile.huntr },
+  { label: 'WordPress.org', value: 'profiles.wordpress.org/aldorza', href: profile.wordpress },
+];
+const year = new Date().getFullYear();
+---
+
+<footer class="foot">
+  <div class="shell foot__inner">
+    <div class="foot__lead">
+      <p class="eyebrow">Penutup — closing provisions</p>
+      <h2 class="foot__title">Open for <em>work</em></h2>
+      <p class="foot__blurb">
+        Freelance security review, backend and automation work, and junior or internship roles in
+        application security. If a system is interesting, I would rather look at it than talk about it.
+      </p>
+    </div>
+
+    <nav class="foot__links" aria-label="Contact">
+      {
+        links.map((l) => (
+          <a class="foot__link" href={l.href} rel="noopener" target={l.href.startsWith('mailto') ? undefined : '_blank'}>
+            <span class="foot__value">{l.value}</span>
+            <span class="foot__label">{l.label}</span>
+          </a>
+        ))
+      }
+    </nav>
+
+    <p class="foot__sig">
+      {profile.name} — {profile.location}<br />
+      Set in Bodoni Moda and IBM Plex. Lattice after Minangkabau songket.<br />
+      Built with Astro. Every claim links to something a stranger can check. © {year}
+    </p>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    background: var(--ink-deep);
+    border-top: 1px solid var(--hair);
+    padding-block: clamp(4rem, 2.5rem + 5vw, 6rem);
+  }
+  .foot__inner {
+    display: grid;
+    gap: 40px;
+  }
+  .foot__lead .eyebrow {
+    margin-bottom: 18px;
+  }
+  .foot__title {
+    font-size: var(--step-3);
+    line-height: 1.1;
+  }
+  .foot__title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .foot__blurb {
+    margin-top: 18px;
+    max-width: var(--measure);
+    color: var(--bone-dim);
+  }
+  .foot__links {
+    display: grid;
+    max-width: var(--measure);
+  }
+  .foot__link {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+    padding-block: 16px;
+    border-bottom: 1px solid var(--hair-soft);
+    font-family: var(--mono);
+    font-size: 0.86rem;
+    color: var(--bone);
+    transition:
+      color 0.25s ease,
+      padding-left 0.25s ease;
+  }
+  .foot__link:hover {
+    color: var(--gold-lit);
+    padding-left: 9px;
+  }
+  .foot__label {
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    flex-shrink: 0;
+  }
+  .foot__sig {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    line-height: 2;
+    color: var(--bone-faint);
+    border-top: 1px solid var(--hair-soft);
+    padding-top: 20px;
+    max-width: var(--measure);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .foot__link {
+      transition: none;
+    }
+  }
+</style>
