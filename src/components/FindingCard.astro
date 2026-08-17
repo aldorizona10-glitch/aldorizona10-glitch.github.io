@@ -1,28 +1,37 @@
 ---
-import type { Finding } from '../data/site';
+import { t } from '../i18n/content';
+import type { Lang } from '../i18n/config';
+import type { FindingId } from '../data/site';
+
 interface Props {
-  finding: Finding;
+  lang: Lang;
+  id: FindingId;
+  target: string;
+  verifyUrl: string;
+  sealed: boolean;
 }
-const { finding } = Astro.props;
+const { lang, id, target, verifyUrl, sealed } = Astro.props;
+const c = t(lang);
+const f = c.findings[id];
+const L = c.security.specLabels;
+
 const specs = [
-  { k: 'Severity', v: finding.severity, hi: true },
-  { k: 'Class', v: finding.cwe },
-  { k: 'Vector', v: finding.vector },
-  { k: 'Platform', v: finding.platform },
-  { k: 'Reported', v: finding.reported },
-  { k: 'Resolution', v: finding.resolution },
+  { k: L.severity, v: f.severity, hi: true },
+  { k: L.class, v: f.cwe },
+  { k: L.vector, v: f.vector },
+  { k: L.platform, v: f.platform },
+  { k: L.reported, v: f.reported },
+  { k: L.resolution, v: f.resolution },
 ];
 ---
 
 <article class="finding rise">
   <div class="finding__top">
-    <span class="finding__target">{finding.target}</span>
-    <span class:list={['chip', finding.status === 'Rewarded' ? 'chip--gold' : 'chip--sage']}>
-      {finding.award}
-    </span>
+    <span class="finding__target">{target}</span>
+    <span class:list={['chip', sealed ? 'chip--gold' : 'chip--sage']}>{f.award}</span>
   </div>
 
-  <p class="finding__summary">{finding.summary}</p>
+  <p class="finding__summary">{f.summary}</p>
 
   <dl class="spec">
     {
@@ -35,10 +44,13 @@ const specs = [
     }
   </dl>
 
-  <p class:list={['finding__detail', { sealed: finding.sealed }]}>{finding.detail}</p>
+  <p class:list={['finding__detail', { sealed }]}>{f.detail}</p>
 
-  <a class="finding__verify" href={finding.verifyUrl} rel="noopener" target="_blank">
-    {finding.verifyLabel} <span aria-hidden="true">→</span>
+  <a class="finding__verify" href={verifyUrl} rel="noopener" target="_blank">
+    <span>{f.verifyLabel}</span>
+    <svg class="finding__arrow" viewBox="0 0 16 16" aria-hidden="true" width="13" height="13">
+      <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
   </a>
 </article>
 
@@ -75,7 +87,7 @@ const specs = [
   }
   .chip {
     font-family: var(--mono);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     letter-spacing: 0.04em;
     border: 1px solid var(--hair);
     padding: 5px 11px;
@@ -95,7 +107,7 @@ const specs = [
   }
   .spec {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 18px;
     border-top: 1px solid var(--hair);
     padding-top: 20px;
@@ -110,9 +122,9 @@ const specs = [
   }
   .spec dd {
     font-family: var(--mono);
-    font-size: 0.86rem;
+    font-size: 0.84rem;
     color: var(--bone);
-    line-height: 1.4;
+    line-height: 1.45;
   }
   .spec dd.hi {
     color: var(--gold-lit);
@@ -126,26 +138,51 @@ const specs = [
   }
   .finding__detail.sealed {
     font-family: var(--mono);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--bone-faint);
     border-left: 2px solid var(--oxblood);
     padding-left: 16px;
   }
   .finding__verify {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     margin-top: 24px;
     font-family: var(--mono);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     letter-spacing: 0.04em;
     color: var(--bone-dim);
     border-bottom: 1px solid var(--hair);
     padding-bottom: 3px;
     transition:
-      color 0.25s ease,
-      border-color 0.25s ease;
+      color var(--dur-hover) ease,
+      border-color var(--dur-hover) ease;
   }
-  .finding__verify:hover {
-    color: var(--gold-lit);
-    border-color: var(--gold);
+  .finding__arrow {
+    transition: transform var(--dur-hover) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .finding__verify:hover {
+      color: var(--gold-lit);
+      border-color: var(--gold);
+    }
+    .finding__verify:hover .finding__arrow {
+      transform: translateX(3px);
+    }
+  }
+  .finding__verify:active {
+    transform: scale(0.985);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .finding__arrow,
+    .finding__verify {
+      transition: color var(--dur-hover) ease;
+    }
+    .finding__verify:hover .finding__arrow,
+    .finding__verify:active {
+      transform: none;
+    }
   }
 </style>

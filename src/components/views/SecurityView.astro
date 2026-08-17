@@ -1,0 +1,59 @@
+---
+import PageHeader from '../PageHeader.astro';
+import FindingCard from '../FindingCard.astro';
+import { findings } from '../../data/site';
+import { t } from '../../i18n/content';
+import type { Lang } from '../../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+---
+
+<PageHeader
+  mark={c.security.mark}
+  railLabel={c.security.railLabel}
+  title={c.security.title}
+  intro={c.security.intro}
+/>
+
+<div class="shell stack">
+  {findings.map((f) => <FindingCard lang={lang} id={f.id} target={f.target} verifyUrl={f.verifyUrl} sealed={f.sealed} />)}
+</div>
+
+<section class="shell article method">
+  <div class="rail" aria-hidden="true"></div>
+  <div class="body">
+    <h2 class="h-section rise" set:html={c.security.methodTitle} />
+    {c.security.method.map((p) => <p class="rise" set:html={p} />)}
+  </div>
+</section>
+
+<style>
+  .stack {
+    display: grid;
+    gap: 26px;
+    padding-block: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  }
+  .method {
+    padding-top: 0;
+    border-bottom: none;
+  }
+  .method .body :global(p + p) {
+    margin-top: 20px;
+  }
+  .method .body :global(p) {
+    max-width: var(--measure);
+    color: var(--bone-dim);
+  }
+  .method .body :global(strong) {
+    color: var(--bone);
+    font-weight: 500;
+  }
+  .method .body :global(em) {
+    font-style: italic;
+    color: var(--bone);
+  }
+</style>

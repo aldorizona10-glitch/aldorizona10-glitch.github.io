@@ -1,5 +1,13 @@
 ---
 import { projects } from '../data/site';
+import { t } from '../i18n/content';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
 ---
 
 <div class="works rise">
@@ -8,14 +16,15 @@ import { projects } from '../data/site';
       <article class="work">
         <span class="work__idx">{String(i + 1).padStart(2, '0')}</span>
         <h3 class="work__name">{p.name}</h3>
-        <p class="work__blurb">{p.blurb}</p>
-        <span class="work__tags">{p.tags.join(' · ')}</span>
+        <p class="work__blurb">{c.projects.blurbs[p.id]}</p>
+        <span class="work__tags">{p.tags.join(' / ')}</span>
       </article>
     ))
   }
 </div>
 
 <style>
+  /* Exactly six cells for six projects. No empty tile. */
   .works {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -23,27 +32,13 @@ import { projects } from '../data/site';
     background: var(--hair-soft);
     border: 1px solid var(--hair-soft);
   }
-  @media (max-width: 900px) {
-    .works {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 560px) {
-    .works {
-      grid-template-columns: 1fr;
-    }
-  }
   .work {
     background: var(--ink);
     padding: 28px 26px 26px;
     display: flex;
     flex-direction: column;
     gap: 11px;
-    transition: background 0.35s ease;
-  }
-  .work:hover,
-  .work:focus-within {
-    background: var(--ink-raise);
+    transition: background-color 260ms var(--ease-out);
   }
   .work__idx {
     font-family: var(--mono);
@@ -73,6 +68,22 @@ import { projects } from '../data/site';
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--bone-faint);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .work:hover {
+      background-color: var(--ink-raise);
+    }
+  }
+  @media (max-width: 900px) {
+    .works {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .works {
+      grid-template-columns: 1fr;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .work {

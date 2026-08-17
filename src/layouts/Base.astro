@@ -1,5 +1,5 @@
 ---
-// Font faces — self-hosted via @fontsource, bundled at build time (no runtime CDN).
+// Self-hosted via @fontsource, bundled at build time. No runtime CDN request.
 import '@fontsource/bodoni-moda/latin-400.css';
 import '@fontsource/bodoni-moda/latin-400-italic.css';
 import '@fontsource/bodoni-moda/latin-500.css';
@@ -15,51 +15,65 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { profile } from '../data/site';
+import { t } from '../i18n/content';
+import { pathFor, LOCALES, DEFAULT_LOCALE, type Lang, type PageKey } from '../i18n/config';
 
 interface Props {
-  title: string;
-  description: string;
+  lang: Lang;
+  page: PageKey;
 }
-const { title, description } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? profile.siteUrl).href;
+const { lang, page } = Astro.props;
+const c = t(lang);
+const meta = c.meta[page];
+
+const origin = (Astro.site ?? new URL(profile.siteUrl)).origin;
+const canonical = new URL(pathFor(page, lang), origin).href;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={c.htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{meta.title}</title>
+    <meta name="description" content={meta.description} />
     <meta name="author" content={profile.name} />
     <meta name="theme-color" content="#12101A" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
+    {
+      LOCALES.map((code) => (
+        <link rel="alternate" hreflang={code} href={new URL(pathFor(page, code), origin).href} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={new URL(pathFor(page, DEFAULT_LOCALE), origin).href} />
+
     <meta property="og:type" content="profile" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={meta.title} />
+    <meta property="og:description" content={meta.description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'id' ? 'id_ID' : 'en_US'} />
     <meta property="og:site_name" content={profile.name} />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={meta.title} />
+    <meta name="twitter:description" content={meta.description} />
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
-    <Nav />
+    <a class="skip" href="#main">{c.a11y.skip}</a>
+    <Nav lang={lang} page={page} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
 
     <script>
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const items = document.querySelectorAll('.rise');
+      const items = document.querySelectorAll<HTMLElement>('.rise');
+
       if (reduce || !('IntersectionObserver' in window)) {
         items.forEach((el) => el.classList.add('in'));
       } else {
-        // Elements already above the fold reveal immediately.
         const io = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
@@ -70,8 +84,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? profile.siteUrl).hre
           },
           { rootMargin: '0px 0px -10% 0px', threshold: 0.08 }
         );
+        // Short stagger: long delays read as a slow page, not a considered one.
         items.forEach((el, i) => {
-          (el as HTMLElement).style.transitionDelay = `${(i % 5) * 55}ms`;
+          el.style.transitionDelay = `${(i % 5) * 45}ms`;
           io.observe(el);
         });
       }
