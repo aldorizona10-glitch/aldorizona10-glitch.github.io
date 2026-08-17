@@ -28,6 +28,8 @@ const meta = c.meta[page];
 
 const origin = (Astro.site ?? new URL(profile.siteUrl)).origin;
 const canonical = new URL(pathFor(page, lang), origin).href;
+// Absolute: link previews reject relative image paths.
+const ogImage = new URL('/og.jpg', origin).href;
 ---
 
 <!doctype html>
@@ -55,9 +57,14 @@ const canonical = new URL(pathFor(page, lang), origin).href;
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={lang === 'id' ? 'id_ID' : 'en_US'} />
     <meta property="og:site_name" content={profile.name} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${profile.name}. Security research, open source, and constitutional law.`} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={meta.title} />
     <meta name="twitter:description" content={meta.description} />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
     <a class="skip" href="#main">{c.a11y.skip}</a>
