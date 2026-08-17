@@ -113,7 +113,7 @@ const en: Dict = {
     projects: {
       title: 'Projects, Aldo Rizona',
       description:
-        'Published work only: an offline invoice studio, a prompt-injection training range, an ops automation kit, and a bug tracker. Source, and a live demo where there is one.',
+        'Published work only: an offline invoice studio, a prompt-injection training range, and an ops automation kit. Source for each, and a live demo where there is one.',
     },
     about: {
       title: 'About, Aldo Rizona',
@@ -135,7 +135,7 @@ const en: Dict = {
     rows: [
       { page: 'security', mark: 'Pasal I', title: 'Security', teaser: 'Two findings on two AI platforms. One rewarded, one published. Both verifiable by a stranger.', stat: '$2,500 + 1 published' },
       { page: 'open-source', mark: 'Pasal II', title: 'Open source', teaser: 'Seven pull requests merged into repositories I do not own, three of them into WordPress.', stat: '7 merged' },
-      { page: 'projects', mark: 'Pasal III', title: 'Projects', teaser: 'A short list on purpose. Only published work, each with source you can open.', stat: '4 published' },
+      { page: 'projects', mark: 'Pasal III', title: 'Projects', teaser: 'A short list on purpose. Only published work, each with source you can open.', stat: '3 published' },
       { page: 'about', mark: 'Pasal IV', title: 'About', teaser: 'A final-year law student who reads software the way he reads statutes.', stat: 'The reasoning' },
     ],
   },
@@ -224,8 +224,6 @@ const en: Dict = {
         'A training range for prompt injection. Its simulated defence layers label what they caught, so it teaches diagnosis instead of handing over payloads.',
       quickops:
         'A zero-budget ops kit for a one-person shop: outreach, reply monitoring, and delivery workflows wired together so one operator runs like a team.',
-      bugbox:
-        'A bug tracker hardened against its own edge cases through an automated verification loop. The tracker and the tests grew together.',
     },
     repoLabel: 'Source',
     demoLabel: 'Live',
@@ -301,7 +299,7 @@ const id: Dict = {
     projects: {
       title: 'Karya, Aldo Rizona',
       description:
-        'Hanya karya yang sudah terbit: studio invoice offline, arena latihan prompt injection, kit otomasi operasional, dan pelacak bug. Kode, dan demo bila ada.',
+        'Hanya karya yang sudah terbit: studio invoice offline, arena latihan prompt injection, dan kit otomasi operasional. Kode untuk masing-masing, dan demo bila ada.',
     },
     about: {
       title: 'Tentang, Aldo Rizona',
@@ -323,7 +321,7 @@ const id: Dict = {
     rows: [
       { page: 'security', mark: 'Pasal I', title: 'Keamanan', teaser: 'Dua temuan di dua platform AI. Satu dibayar, satu dipublikasikan. Keduanya bisa dicek orang lain.', stat: '$2.500 + 1 terbit' },
       { page: 'open-source', mark: 'Pasal II', title: 'Open source', teaser: 'Tujuh pull request di-merge ke repositori milik pihak lain, tiga di antaranya ke WordPress.', stat: '7 di-merge' },
-      { page: 'projects', mark: 'Pasal III', title: 'Karya', teaser: 'Daftarnya sengaja pendek. Hanya karya terbit, masing-masing dengan kode yang bisa dibuka.', stat: '4 terbit' },
+      { page: 'projects', mark: 'Pasal III', title: 'Karya', teaser: 'Daftarnya sengaja pendek. Hanya karya terbit, masing-masing dengan kode yang bisa dibuka.', stat: '3 terbit' },
       { page: 'about', mark: 'Pasal IV', title: 'Tentang', teaser: 'Mahasiswa hukum tingkat akhir yang membaca perangkat lunak seperti membaca undang-undang.', stat: 'Alasannya' },
     ],
   },
@@ -412,8 +410,6 @@ const id: Dict = {
         'Arena latihan prompt injection. Lapisan pertahanan simulasinya menyebutkan apa yang mereka tangkap, jadi yang diajarkan adalah diagnosis, bukan payload jadi.',
       quickops:
         'Kit operasional tanpa modal untuk usaha satu orang: penjangkauan, pemantauan balasan, dan alur pengiriman yang dirangkai supaya satu orang bisa bekerja seperti satu tim.',
-      bugbox:
-        'Pelacak bug yang dikeraskan terhadap kasus tepinya sendiri lewat loop verifikasi otomatis. Pelacak dan tesnya tumbuh bersama.',
     },
     repoLabel: 'Kode',
     demoLabel: 'Live',

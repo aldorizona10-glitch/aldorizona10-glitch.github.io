@@ -38,7 +38,7 @@ export const pullRequests: PR[] = [
   { repo: 'arrow-py/arrow', number: '#1335', url: 'https://github.com/arrow-py/arrow/pull/1335', merged: false, group: 'other' },
 ];
 
-export type ProjectId = 'ledgerline' | 'injectlab' | 'quickops' | 'bugbox';
+export type ProjectId = 'ledgerline' | 'injectlab' | 'quickops';
 
 // Admission rule, deliberately strict: a project appears here only if a
 // stranger can open it and judge it. Anything unpublished, or thin enough
@@ -72,14 +72,6 @@ export const projects: {
     name: 'QuickOps AI',
     tags: ['Python', 'Automation'],
     repo: 'https://github.com/aldorizona10-glitch/quickops-ai',
-  },
-  {
-    // No demo link: the hosted instance loads but its sign-in endpoint returns
-    // a server error, so "Live" would send visitors to something they cannot use.
-    id: 'bugbox',
-    name: 'BugBox',
-    tags: ['TypeScript', 'Testing'],
-    repo: 'https://github.com/aldorizona10-glitch/bugbox',
   },
 ];
 
