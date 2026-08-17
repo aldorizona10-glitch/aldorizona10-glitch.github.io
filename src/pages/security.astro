@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import FindingCard from '../components/FindingCard.astro';
+import { findings } from '../data/site';
+
+const title = 'Security research — Aldo Rizona';
+const description =
+  'Two disclosed findings on major AI platforms: a High-severity access-control report rewarded $2,500 by X/xAI on HackerOne, and a published denial-of-service in the ONNX specification via the Expand operator.';
+---
+
+<Base title={title} description={description}>
+  <PageHeader
+    eyebrow="Pasal I — Security research"
+    title="Two findings, <em>two platforms</em>"
+    intro="One paid, one published. I keep the count honest: most of the work returns nothing, and the reports below sit on top of a tall stack of audits that found nothing at all."
+  />
+
+  <div class="shell stack">
+    {findings.map((f) => <FindingCard finding={f} />)}
+  </div>
+
+  <div class="shell article approach">
+    <div class="rail">
+      <div class="rail__inner">
+        <span class="rail__mark">Method</span>
+        <span class="rail__label">How I<br />read a system</span>
+      </div>
+    </div>
+    <div class="body">
+      <h2 class="h-section rise">Where the missing sentence <em>hides</em></h2>
+      <p class="rise">
+        Vulnerabilities are rarely rules that were broken. They are conditions nobody thought to check
+        — the article that omits a case, the definition drawn too narrowly, the procedure that never
+        says who verifies. I read APIs, permission models, and now LLM-driven systems the same way I
+        read a statute: all the way to the part it forgot to cover.
+      </p>
+      <p class="rise">
+        <strong>Where I spend attention:</strong> broken access control, authorization on object-level
+        operations, resource-exhaustion in model runtimes, and the trust boundaries of AI agent
+        tooling — prompt injection included. Places where no automated scanner can tell you what the
+        system was <em>supposed</em> to mean.
+      </p>
+      <p class="rise">
+        <strong>On disclosure:</strong> I report through official channels and hold the line on what I
+        publish. Where a program forbids describing the weakness, I state only that the finding exists.
+        Where a report is already public — as the ONNX one is — I describe the mechanism openly.
+      </p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .stack {
+    display: grid;
+    gap: 28px;
+    padding-block: clamp(3rem, 2rem + 3vw, 4.5rem);
+  }
+  .approach {
+    padding-top: 0;
+  }
+</style>

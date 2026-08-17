@@ -1,0 +1,82 @@
+---
+import { projects } from '../data/site';
+---
+
+<div class="works rise">
+  {
+    projects.map((p, i) => (
+      <article class="work">
+        <span class="work__idx">{String(i + 1).padStart(2, '0')}</span>
+        <h3 class="work__name">{p.name}</h3>
+        <p class="work__blurb">{p.blurb}</p>
+        <span class="work__tags">{p.tags.join(' · ')}</span>
+      </article>
+    ))
+  }
+</div>
+
+<style>
+  .works {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--hair-soft);
+    border: 1px solid var(--hair-soft);
+  }
+  @media (max-width: 900px) {
+    .works {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .works {
+      grid-template-columns: 1fr;
+    }
+  }
+  .work {
+    background: var(--ink);
+    padding: 28px 26px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    transition: background 0.35s ease;
+  }
+  .work:hover,
+  .work:focus-within {
+    background: var(--ink-raise);
+  }
+  .work__idx {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    opacity: 0.8;
+  }
+  .work__name {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: var(--step-1);
+    line-height: 1.2;
+    color: var(--bone);
+  }
+  .work__blurb {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--bone-dim);
+  }
+  .work__tags {
+    margin-top: auto;
+    padding-top: 14px;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .work {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import { profile } from '../data/site';
+
+const title = 'Projects — Aldo Rizona';
+const description =
+  'Small tools, finished and usable — an in-browser invoice studio, a prompt-injection training sandbox, ops automation, and data-quality agents. Most are single-file and dependency-free.';
+---
+
+<Base title={title} description={description}>
+  <PageHeader
+    eyebrow="Pasal III — Projects"
+    title="Built to <em>ship</em>, not to demo"
+    intro="Small tools, finished and usable. Most are single-file and dependency-free, because the fastest way to keep software trustworthy is to give it less surface."
+  />
+
+  <div class="shell wrap">
+    <ProjectGrid />
+    <p class="more rise">
+      <a href={profile.github} rel="noopener" target="_blank">All repositories on GitHub →</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .wrap {
+    padding-block: clamp(3rem, 2rem + 3vw, 4.5rem);
+  }
+  .more {
+    margin-top: 26px;
+    font-family: var(--mono);
+    font-size: 0.86rem;
+  }
+</style>

@@ -1,0 +1,261 @@
+/* ============================================================
+   Design system — "Instrumen"
+   A deliberately single-world dark identity: aubergine ink,
+   antique gold, bone. Structure borrowed from an Indonesian
+   legal instrument; texture from Minangkabau songket.
+   ============================================================ */
+
+:root {
+  /* — ground & surface — */
+  --ink: #12101a;
+  --ink-deep: #0c0a12;
+  --ink-raise: #1a1723;
+  --ink-raise-2: #221d2e;
+
+  /* — text — */
+  --bone: #e8e2d6;
+  --bone-dim: #9c9488;
+  --bone-faint: #6e6860;
+
+  /* — accent — */
+  --gold: #c9a227;
+  --gold-lit: #e8ce7e;
+  --oxblood: #7a2430;
+  --sage: #7fae8f; /* semantic: merged / resolved */
+
+  /* — lines — */
+  --hair: rgba(201, 162, 39, 0.2);
+  --hair-soft: rgba(232, 226, 214, 0.1);
+  --hair-faint: rgba(232, 226, 214, 0.055);
+
+  /* — type — */
+  --display: 'Bodoni Moda', 'Bodoni MT', Didot, Georgia, serif;
+  --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Consolas, 'DejaVu Sans Mono', monospace;
+
+  /* — type scale (major third) — */
+  --step--1: clamp(0.78rem, 0.76rem + 0.1vw, 0.83rem);
+  --step-0: 1.0625rem;
+  --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.4rem);
+  --step-2: clamp(1.5rem, 1.3rem + 1vw, 1.85rem);
+  --step-3: clamp(1.9rem, 1.5rem + 2vw, 2.85rem);
+  --step-4: clamp(2.6rem, 1.9rem + 3.4vw, 4rem);
+  --step-5: clamp(3.4rem, 2rem + 7vw, 7.5rem);
+
+  /* — layout — */
+  --shell: 1180px;
+  --rail: 132px;
+  --measure: 64ch;
+  --space: clamp(4.5rem, 3rem + 6vw, 7rem); /* section rhythm */
+}
+
+/* ---------- reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: var(--step-0);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+a {
+  color: var(--gold-lit);
+  text-decoration: none;
+}
+::selection {
+  background: var(--gold);
+  color: var(--ink);
+}
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- utilities ---------- */
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 0.5rem + 3vw, 1.75rem);
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bone-faint);
+}
+.mono {
+  font-family: var(--mono);
+}
+.measure {
+  max-width: var(--measure);
+}
+
+/* ---------- skip link ---------- */
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 99;
+  background: var(--gold);
+  color: var(--ink);
+  padding: 10px 16px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.skip:focus {
+  left: 16px;
+  top: 16px;
+}
+
+/* ---------- section scaffold (the "Pasal" rail) ---------- */
+.article {
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  gap: 0 44px;
+  padding-block: var(--space);
+  border-bottom: 1px solid var(--hair-faint);
+}
+.article:last-child {
+  border-bottom: none;
+}
+.rail__inner {
+  position: sticky;
+  top: 88px;
+}
+.rail__mark {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 10px;
+}
+.rail__label {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bone-faint);
+  display: block;
+  line-height: 1.7;
+}
+.rail__inner::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 64px;
+  background: var(--hair);
+  margin-top: 20px;
+}
+
+/* ---------- headings ---------- */
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-weight: 400;
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+}
+.h-section {
+  font-size: var(--step-3);
+  line-height: 1.12;
+  margin-bottom: 26px;
+  max-width: 20ch;
+}
+.h-section em {
+  font-style: italic;
+  color: var(--gold);
+}
+.body p {
+  max-width: var(--measure);
+  color: var(--bone-dim);
+}
+.body p + p {
+  margin-top: 20px;
+}
+.body p strong {
+  color: var(--bone);
+  font-weight: 500;
+}
+.lead {
+  font-size: var(--step-1);
+  color: var(--bone) !important;
+  line-height: 1.5;
+}
+
+/* ---------- reveal-on-scroll ---------- */
+.rise {
+  opacity: 0;
+  transform: translateY(22px);
+}
+.rise.in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.9s cubic-bezier(0.2, 0.7, 0.3, 1),
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- responsive: collapse the rail ---------- */
+@media (max-width: 900px) {
+  :root {
+    --rail: 0px;
+  }
+  .article {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .rail {
+    margin-bottom: 24px;
+  }
+  .rail__inner {
+    position: static;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .rail__inner::after {
+    display: none;
+  }
+  .rail__mark {
+    margin-bottom: 0;
+  }
+}
