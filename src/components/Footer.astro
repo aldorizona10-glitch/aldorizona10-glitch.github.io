@@ -1,8 +1,16 @@
 ---
 import { profile } from '../data/site';
+import { t } from '../i18n/content';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
 
 const links = [
-  { label: 'Email', value: profile.email, href: `mailto:${profile.email}` },
+  { label: c.footer.labels.email, value: profile.email, href: `mailto:${profile.email}` },
   { label: 'GitHub', value: 'github.com/' + profile.githubHandle, href: profile.github },
   { label: 'HackerOne', value: 'hackerone.com/xauud', href: profile.hackerone },
   { label: 'huntr', value: 'huntr.com/users/' + profile.githubHandle, href: profile.huntr },
@@ -14,18 +22,20 @@ const year = new Date().getFullYear();
 <footer class="foot">
   <div class="shell foot__inner">
     <div class="foot__lead">
-      <p class="eyebrow">Penutup — closing provisions</p>
-      <h2 class="foot__title">Open for <em>work</em></h2>
-      <p class="foot__blurb">
-        Freelance security review, backend and automation work, and junior or internship roles in
-        application security. If a system is interesting, I would rather look at it than talk about it.
-      </p>
+      <p class="eyebrow">{c.footer.mark}</p>
+      <h2 class="foot__title" set:html={c.footer.title} />
+      <p class="foot__blurb">{c.footer.blurb}</p>
     </div>
 
-    <nav class="foot__links" aria-label="Contact">
+    <nav class="foot__links" aria-label={c.a11y.contactNav}>
       {
         links.map((l) => (
-          <a class="foot__link" href={l.href} rel="noopener" target={l.href.startsWith('mailto') ? undefined : '_blank'}>
+          <a
+            class="foot__link"
+            href={l.href}
+            rel="noopener"
+            target={l.href.startsWith('mailto') ? undefined : '_blank'}
+          >
             <span class="foot__value">{l.value}</span>
             <span class="foot__label">{l.label}</span>
           </a>
@@ -34,9 +44,9 @@ const year = new Date().getFullYear();
     </nav>
 
     <p class="foot__sig">
-      {profile.name} — {profile.location}<br />
-      Set in Bodoni Moda and IBM Plex. Lattice after Minangkabau songket.<br />
-      Built with Astro. Every claim links to something a stranger can check. © {year}
+      {profile.name}, {c.hero.location}<br />
+      {c.footer.colophon[0]}<br />
+      {c.footer.colophon[1]} &copy; {year}
     </p>
   </div>
 </footer>
@@ -58,7 +68,7 @@ const year = new Date().getFullYear();
     font-size: var(--step-3);
     line-height: 1.1;
   }
-  .foot__title em {
+  .foot__title :global(em) {
     font-style: italic;
     color: var(--gold);
   }
@@ -81,13 +91,13 @@ const year = new Date().getFullYear();
     font-family: var(--mono);
     font-size: 0.86rem;
     color: var(--bone);
+    /* transform, not padding: padding would relayout on every hover frame. */
     transition:
-      color 0.25s ease,
-      padding-left 0.25s ease;
+      color var(--dur-hover) ease,
+      transform var(--dur-hover) var(--ease-out);
   }
-  .foot__link:hover {
-    color: var(--gold-lit);
-    padding-left: 9px;
+  .foot__value {
+    display: inline-block;
   }
   .foot__label {
     font-size: 0.62rem;
@@ -105,9 +115,24 @@ const year = new Date().getFullYear();
     padding-top: 20px;
     max-width: var(--measure);
   }
+
+  @media (hover: hover) and (pointer: fine) {
+    .foot__link:hover {
+      color: var(--gold-lit);
+      transform: translateX(8px);
+    }
+  }
+  .foot__link:active {
+    transform: scale(0.99);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .foot__link {
-      transition: none;
+      transition: color var(--dur-hover) ease;
+    }
+    .foot__link:hover,
+    .foot__link:active {
+      transform: none;
     }
   }
 </style>

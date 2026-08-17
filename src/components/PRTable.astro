@@ -1,34 +1,60 @@
 ---
 import { pullRequests } from '../data/site';
+import { t } from '../i18n/content';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+
+// Group consecutive PRs by repo so the hairline marks a real boundary
+// instead of underlining every single row.
+type Group = { repo: string; rows: typeof pullRequests };
+const groups: Group[] = [];
+for (const pr of pullRequests) {
+  const last = groups[groups.length - 1];
+  if (last && last.repo === pr.repo) last.rows.push(pr);
+  else groups.push({ repo: pr.repo, rows: [pr] });
+}
 ---
 
 <div class="tablewrap rise">
   <table>
-    <caption>Contributions to repositories I do not own</caption>
+    <caption>{c.oss.caption}</caption>
     <thead>
       <tr>
-        <th scope="col">Project</th>
-        <th scope="col">PR</th>
-        <th scope="col">Change</th>
-        <th scope="col">State</th>
+        <th scope="col">{c.oss.cols.project}</th>
+        <th scope="col">{c.oss.cols.pr}</th>
+        <th scope="col">{c.oss.cols.change}</th>
+        <th scope="col">{c.oss.cols.state}</th>
       </tr>
     </thead>
-    <tbody>
-      {
-        pullRequests.map((pr) => (
-          <tr>
-            <td class="repo">{pr.repo}</td>
-            <td class="pr">
-              <a href={pr.url} rel="noopener" target="_blank">
-                {pr.number}
-              </a>
-            </td>
-            <td>{pr.change}</td>
-            <td class:list={['state', pr.state === 'Merged' ? 'merged' : 'open']}>{pr.state}</td>
-          </tr>
-        ))
-      }
-    </tbody>
+    {
+      groups.map((g) => (
+        <tbody>
+          {g.rows.map((pr, i) => (
+            <tr>
+              {i === 0 && (
+                <th scope="rowgroup" class="repo" rowspan={g.rows.length}>
+                  {g.repo}
+                </th>
+              )}
+              <td class="pr">
+                <a href={pr.url} rel="noopener" target="_blank">
+                  {pr.number}
+                </a>
+              </td>
+              <td class="change">{c.oss.changes[pr.number]}</td>
+              <td class:list={['state', pr.merged ? 'merged' : 'open']}>
+                {pr.merged ? c.oss.merged : c.oss.inReview}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      ))
+    }
   </table>
 </div>
 
@@ -52,7 +78,7 @@ import { pullRequests } from '../data/site';
     color: var(--bone-faint);
     padding-bottom: 12px;
   }
-  th {
+  thead th {
     font-family: var(--mono);
     font-size: 0.62rem;
     font-weight: 400;
@@ -64,27 +90,34 @@ import { pullRequests } from '../data/site';
     border-bottom: 1px solid var(--hair);
     white-space: nowrap;
   }
-  td {
-    padding: 14px 16px 14px 0;
-    border-bottom: 1px solid var(--hair-soft);
-    font-size: 0.92rem;
+  /* Boundary between repo groups, not under every row. */
+  tbody + tbody th,
+  tbody + tbody td {
+    border-top: 1px solid var(--hair-soft);
+  }
+  td,
+  tbody th {
+    padding: 13px 16px 13px 0;
+    font-size: 0.9rem;
     color: var(--bone-dim);
     vertical-align: top;
+    text-align: left;
   }
-  td.repo {
+  tbody th.repo {
     color: var(--bone);
     font-family: var(--mono);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
+    font-weight: 400;
     white-space: nowrap;
   }
   td.pr {
     font-family: var(--mono);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     white-space: nowrap;
   }
   td.state {
     font-family: var(--mono);
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     white-space: nowrap;
@@ -94,8 +127,5 @@ import { pullRequests } from '../data/site';
   }
   td.state.open {
     color: var(--bone-faint);
-  }
-  tbody tr:last-child td {
-    border-bottom: none;
   }
 </style>

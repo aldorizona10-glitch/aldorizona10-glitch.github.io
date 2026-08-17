@@ -1,0 +1,146 @@
+---
+import PageHeader from '../PageHeader.astro';
+import { press } from '../../data/site';
+import { t } from '../../i18n/content';
+import type { Lang } from '../../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+---
+
+<PageHeader mark={c.about.mark} railLabel={c.about.railLabel} title={c.about.title} />
+
+<section class="shell article">
+  <div class="rail">
+    <div class="rail__inner">
+      <span class="rail__mark">{c.about.reasonMark}</span>
+      <span class="rail__label" set:html={c.about.reasonRail} />
+    </div>
+  </div>
+  <div class="body">
+    <p class="lead rise">{c.about.lead}</p>
+    {c.about.body.map((p) => <p class="rise" set:html={p} />)}
+  </div>
+</section>
+
+<section class="shell article press">
+  <div class="rail" aria-hidden="true"></div>
+  <div class="body">
+    <h2 class="h-section rise" set:html={c.about.pressTitle} />
+
+    <figure class="quote rise">
+      <blockquote lang="id">&ldquo;{c.about.quote}&rdquo;</blockquote>
+      <figcaption>{c.about.quoteSource}</figcaption>
+    </figure>
+
+    <ul class="press__list">
+      {
+        press.map((p) => (
+          <li class="press__item rise">
+            <span class="press__outlet">{p.outlet}</span>
+            <span class="press__detail">{c.about.details[p.id]}</span>
+            {p.url && (
+              <a class="press__link" href={p.url} rel="noopener" target="_blank">
+                {c.about.read}
+              </a>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="press__note rise">{c.about.note}</p>
+  </div>
+</section>
+
+<style>
+  .article {
+    border-bottom: none;
+  }
+  .body :global(p + p) {
+    margin-top: 20px;
+  }
+  .body :global(p) {
+    max-width: var(--measure);
+    color: var(--bone-dim);
+  }
+  .body :global(strong) {
+    color: var(--bone);
+    font-weight: 500;
+  }
+  .press {
+    padding-top: 0;
+  }
+  .quote {
+    margin: 6px 0 34px;
+    border-left: 1px solid var(--gold);
+    padding-left: 24px;
+    max-width: var(--measure);
+  }
+  .quote blockquote {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--bone);
+  }
+  .quote figcaption {
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+  }
+  .press__list {
+    list-style: none;
+    padding: 0;
+    max-width: var(--measure);
+    border-top: 1px solid var(--hair-soft);
+  }
+  .press__item {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr) auto;
+    gap: 20px;
+    align-items: baseline;
+    padding: 17px 0;
+    border-bottom: 1px solid var(--hair-soft);
+  }
+  .press__outlet {
+    font-family: var(--display);
+    font-size: 1.05rem;
+    color: var(--bone);
+  }
+  .press__detail {
+    color: var(--bone-dim);
+    font-size: 0.9rem;
+  }
+  .press__link {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold-lit);
+    white-space: nowrap;
+  }
+  .press__note {
+    margin-top: 22px;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    line-height: 1.75;
+    color: var(--bone-faint);
+    max-width: var(--measure);
+  }
+  @media (max-width: 620px) {
+    .press__item {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .press__link {
+      justify-self: start;
+    }
+  }
+</style>

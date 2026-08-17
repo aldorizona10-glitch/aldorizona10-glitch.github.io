@@ -1,16 +1,21 @@
 ---
-import { nav, profile } from '../data/site';
+import { profile } from '../data/site';
+import { t } from '../i18n/content';
+import { pathFor, LANG_LABEL, LANG_NAME, LOCALES, type Lang, type PageKey } from '../i18n/config';
 
-const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
-const isActive = (href: string) => {
-  const clean = href.replace(/\/+$/, '') || '/';
-  return clean === here;
-};
+interface Props {
+  lang: Lang;
+  page: PageKey;
+}
+const { lang, page } = Astro.props;
+const c = t(lang);
+
+const items: PageKey[] = ['index', 'security', 'open-source', 'projects', 'about'];
 ---
 
 <header class="nav">
   <div class="nav__inner shell">
-    <a class="brand" href="/" aria-label={`${profile.name} — home`}>
+    <a class="brand" href={pathFor('index', lang)} aria-label={c.a11y.home}>
       <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
         <path d="M16 3 L29 16 L16 29 L3 16 Z" fill="none" stroke="currentColor" stroke-width="1.5" />
         <path d="M16 11 L21 16 L16 21 L11 16 Z" fill="currentColor" />
@@ -18,19 +23,38 @@ const isActive = (href: string) => {
       <span class="brand__name">{profile.name}</span>
     </a>
 
-    <nav class="nav__links" aria-label="Primary">
-      {
-        nav.map((item) => (
-          <a
-            href={item.href}
-            class:list={['nav__link', { 'is-active': isActive(item.href) }]}
-            aria-current={isActive(item.href) ? 'page' : undefined}
-          >
-            {item.label}
-          </a>
-        ))
-      }
-    </nav>
+    <div class="nav__right">
+      <nav class="nav__links" aria-label={c.a11y.primaryNav}>
+        {
+          items.map((key) => (
+            <a
+              href={pathFor(key, lang)}
+              class:list={['nav__link', { 'is-active': key === page }]}
+              aria-current={key === page ? 'page' : undefined}
+            >
+              {c.nav[key]}
+            </a>
+          ))
+        }
+      </nav>
+
+      <div class="lang" role="group" aria-label={c.a11y.langSwitch}>
+        {
+          LOCALES.map((code) => (
+            <a
+              href={pathFor(page, code)}
+              class:list={['lang__opt', { 'is-on': code === lang }]}
+              hreflang={code}
+              lang={code}
+              aria-label={LANG_NAME[code]}
+              aria-current={code === lang ? 'true' : undefined}
+            >
+              {LANG_LABEL[code]}
+            </a>
+          ))
+        }
+      </div>
+    </div>
   </div>
 </header>
 
@@ -49,7 +73,7 @@ const isActive = (href: string) => {
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    min-height: 60px;
+    min-height: 62px;
   }
   .brand {
     display: inline-flex;
@@ -68,10 +92,16 @@ const isActive = (href: string) => {
     color: var(--bone);
     letter-spacing: -0.01em;
   }
+  .nav__right {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.9rem, 0.3rem + 2vw, 1.75rem);
+    min-width: 0;
+  }
   .nav__links {
     display: flex;
     align-items: center;
-    gap: clamp(0.75rem, 0.2rem + 2vw, 1.9rem);
+    gap: clamp(0.75rem, 0.2rem + 1.8vw, 1.7rem);
     overflow-x: auto;
     scrollbar-width: none;
   }
@@ -88,17 +118,65 @@ const isActive = (href: string) => {
     padding-block: 6px;
     border-bottom: 1px solid transparent;
     transition:
-      color 0.25s ease,
-      border-color 0.25s ease;
-  }
-  .nav__link:hover {
-    color: var(--bone);
+      color var(--dur-hover) ease,
+      border-color var(--dur-hover) ease;
   }
   .nav__link.is-active {
     color: var(--gold-lit);
     border-bottom-color: var(--gold);
   }
-  @media (max-width: 560px) {
+
+  /* — language toggle — */
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--hair);
+    flex-shrink: 0;
+  }
+  .lang__opt {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+    color: var(--bone-faint);
+    padding: 5px 9px;
+    transition:
+      color var(--dur-hover) ease,
+      background-color var(--dur-hover) ease,
+      transform var(--dur-press) var(--ease-out);
+  }
+  .lang__opt.is-on {
+    color: var(--ink);
+    background: var(--gold);
+  }
+  /* Press feedback: the interface confirms it heard the tap. */
+  .lang__opt:active,
+  .nav__link:active {
+    transform: scale(0.96);
+  }
+
+  /* Touch devices fire :hover on tap, so gate hover-only affordances. */
+  @media (hover: hover) and (pointer: fine) {
+    .nav__link:hover {
+      color: var(--bone);
+    }
+    .lang__opt:hover:not(.is-on) {
+      color: var(--bone);
+      background: var(--ink-raise);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav__link,
+    .lang__opt {
+      transition: none;
+    }
+    .nav__link:active,
+    .lang__opt:active {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 720px) {
     .brand__name {
       display: none;
     }

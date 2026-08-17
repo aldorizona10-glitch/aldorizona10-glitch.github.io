@@ -1,0 +1,66 @@
+---
+import PageHeader from '../PageHeader.astro';
+import ProjectGrid from '../ProjectGrid.astro';
+import { profile } from '../../data/site';
+import { t } from '../../i18n/content';
+import type { Lang } from '../../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+---
+
+<PageHeader
+  mark={c.projects.mark}
+  railLabel={c.projects.railLabel}
+  title={c.projects.title}
+  intro={c.projects.intro}
+/>
+
+<div class="shell wrap">
+  <ProjectGrid lang={lang} />
+  <p class="more rise">
+    <a class="out" href={profile.github} rel="noopener" target="_blank">
+      <span>{c.projects.allRepos}</span>
+      <svg viewBox="0 0 16 16" aria-hidden="true" width="13" height="13">
+        <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </a>
+  </p>
+</div>
+
+<style>
+  .wrap {
+    padding-block: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  }
+  .more {
+    margin-top: 26px;
+  }
+  .out {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--gold-lit);
+    transition: color var(--dur-hover) ease;
+  }
+  .out svg {
+    transition: transform var(--dur-hover) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .out:hover svg {
+      transform: translateX(3px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .out svg {
+      transition: none;
+    }
+    .out:hover svg {
+      transform: none;
+    }
+  }
+</style>

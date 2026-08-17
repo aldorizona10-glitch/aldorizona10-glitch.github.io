@@ -47,6 +47,15 @@
   --rail: 132px;
   --measure: 64ch;
   --space: clamp(4.5rem, 3rem + 6vw, 7rem); /* section rhythm */
+
+  /* — motion —
+     Custom curves; the built-in CSS easings are too weak to read as intentional.
+     Never ease-in on UI: it delays the first frame, the moment the eye is on. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dur-press: 140ms; /* button press feedback */
+  --dur-hover: 180ms; /* hover / colour change */
+  --dur-reveal: 560ms; /* scroll reveal, explanatory not interactive */
 }
 
 /* ---------- reset ---------- */
@@ -210,19 +219,23 @@ h3 {
   line-height: 1.5;
 }
 
-/* ---------- reveal-on-scroll ---------- */
+/* ---------- reveal-on-scroll ----------
+   Purpose: sequence. Content arrives in reading order instead of all at once.
+   Only transform and opacity animate, so this stays on the compositor. */
 .rise {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(14px);
 }
 .rise.in {
   opacity: 1;
   transform: none;
   transition:
-    opacity 0.9s cubic-bezier(0.2, 0.7, 0.3, 1),
-    transform 0.9s cubic-bezier(0.2, 0.7, 0.3, 1);
+    opacity var(--dur-reveal) var(--ease-out),
+    transform var(--dur-reveal) var(--ease-out);
 }
 
+/* Reduced motion keeps the opacity fade, which aids comprehension,
+   and drops every positional move. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

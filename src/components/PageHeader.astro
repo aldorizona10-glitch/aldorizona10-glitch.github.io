@@ -1,55 +1,84 @@
 ---
+// The Pasal mark sits in the margin rail only, never repeated as an eyebrow
+// above the headline. One structural label per page.
 interface Props {
-  eyebrow: string;
+  mark: string;
+  railLabel: string;
   title: string;
   intro?: string;
 }
-const { eyebrow, title, intro } = Astro.props;
+const { mark, railLabel, title, intro } = Astro.props;
 ---
 
 <header class="phead">
-  <div class="shell">
-    <p class="eyebrow rise">{eyebrow}</p>
-    <h1 class="phead__title rise" set:html={title} />
-    {intro && <p class="phead__intro rise">{intro}</p>}
+  <div class="shell phead__grid">
+    <div class="rail">
+      <div class="rail__inner">
+        <span class="rail__mark">{mark}</span>
+        <span class="rail__label" set:html={railLabel} />
+      </div>
+    </div>
+    <div class="phead__body">
+      <h1 class="phead__title rise" set:html={title} />
+      {intro && <p class="phead__intro rise">{intro}</p>}
+    </div>
   </div>
 </header>
 
 <style>
   .phead {
-    padding-top: clamp(3.5rem, 2rem + 6vw, 6rem);
-    padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 3.5rem);
-    border-bottom: 1px solid var(--hair);
     position: relative;
     overflow: hidden;
+    padding-top: clamp(3rem, 2rem + 4vw, 4.5rem);
+    padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 3.5rem);
+    border-bottom: 1px solid var(--hair);
   }
   .phead::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(80% 120% at 10% 0%, rgba(201, 162, 39, 0.06), transparent 55%);
+    background: radial-gradient(80% 120% at 8% 0%, rgba(201, 162, 39, 0.06), transparent 55%);
     pointer-events: none;
   }
-  .phead .eyebrow {
-    margin-bottom: 20px;
+  .phead__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    gap: 0 44px;
   }
   .phead__title {
     font-family: var(--display);
     font-weight: 400;
     font-size: var(--step-4);
-    line-height: 1;
+    line-height: 1.04;
     letter-spacing: -0.015em;
     max-width: 16ch;
+    /* Italic emphasis with descenders needs clearance or the tail clips. */
+    padding-bottom: 0.12em;
   }
   .phead__title :global(em) {
     font-style: italic;
     color: var(--gold);
+    line-height: 1.1;
   }
   .phead__intro {
-    margin-top: 26px;
+    margin-top: 24px;
     max-width: var(--measure);
     font-size: var(--step-1);
     color: var(--bone-dim);
     line-height: 1.5;
+  }
+  .phead .rail__inner {
+    position: static;
+  }
+  .phead .rail__inner::after {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .phead__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
   }
 </style>
