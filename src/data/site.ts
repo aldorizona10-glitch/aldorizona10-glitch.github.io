@@ -38,7 +38,7 @@ export const pullRequests: PR[] = [
   { repo: 'arrow-py/arrow', number: '#1335', url: 'https://github.com/arrow-py/arrow/pull/1335', merged: false, group: 'other' },
 ];
 
-export type ProjectId = 'quickops' | 'bugbox';
+export type ProjectId = 'ledgerline' | 'injectlab' | 'quickops' | 'bugbox';
 
 // Admission rule, deliberately strict: a project appears here only if a
 // stranger can open it and judge it. Anything unpublished, or thin enough
@@ -50,6 +50,20 @@ export const projects: {
   repo: string;
   demo?: string;
 }[] = [
+  {
+    id: 'ledgerline',
+    name: 'Ledgerline',
+    tags: ['Vanilla JS', 'Offline-first'],
+    repo: 'https://github.com/aldorizona10-glitch/ledgerline-invoice',
+    demo: 'https://aldorizona10-glitch.github.io/ledgerline-invoice/',
+  },
+  {
+    id: 'injectlab',
+    name: 'InjectLab',
+    tags: ['LLM security', 'Training'],
+    repo: 'https://github.com/aldorizona10-glitch/injectlab',
+    demo: 'https://aldorizona10-glitch.github.io/injectlab/',
+  },
   {
     id: 'quickops',
     name: 'QuickOps AI',
