@@ -75,12 +75,12 @@ export const projects: {
   },
 ];
 
-export type PressId = 'rework' | 'codepolitan' | 'coursenet' | 'tribun' | 'katasuhukita';
+export type PressId = 'rework';
 
+// 2026-08-20: removed codepolitan/coursenet/tribun/katasuhukita — claimed
+// from a prior session's read of a Google SERP, never independently
+// confirmed, and the user did not recognize them when asked. Only list
+// press here once a stranger can click through and see it themselves.
 export const press: { id: PressId; outlet: string; url?: string }[] = [
   { id: 'rework', outlet: 'ReWork Academy', url: profile.reworkFeature },
-  { id: 'codepolitan', outlet: 'Codepolitan' },
-  { id: 'coursenet', outlet: 'Course-Net' },
-  { id: 'tribun', outlet: 'Tribun Jateng' },
-  { id: 'katasuhukita', outlet: 'Katasuhukita' },
 ];
