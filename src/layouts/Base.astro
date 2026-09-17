@@ -12,6 +12,7 @@ import '@fontsource/ibm-plex-mono/latin-400.css';
 import '@fontsource/ibm-plex-mono/latin-500.css';
 
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { profile } from '../data/site';
@@ -65,8 +66,24 @@ const ogImage = new URL('/og.jpg', origin).href;
     <meta name="twitter:title" content={meta.title} />
     <meta name="twitter:description" content={meta.description} />
     <meta name="twitter:image" content={ogImage} />
+
+    {/* Animated client-side navigation between pages. */}
+    <ClientRouter />
+
+    {/* Without JS the reveal never fires, so guarantee content is visible. */}
+    <noscript>
+      <style>
+        .rise {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+    </noscript>
   </head>
   <body>
+    <div class="scroll-rail" aria-hidden="true">
+      <div class="scroll-rail__fill" id="scroll-rail-fill"></div>
+    </div>
     <a class="skip" href="#main">{c.a11y.skip}</a>
     <Nav lang={lang} page={page} />
     <main id="main">
@@ -75,12 +92,19 @@ const ogImage = new URL('/og.jpg', origin).href;
     <Footer lang={lang} />
 
     <script>
+      // Reveal-on-scroll, reading-progress rail, and ledger count-up.
+      // Wrapped in functions and driven by `astro:page-load` so every effect
+      // re-arms after a View Transition, not only on the first hard load.
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const items = document.querySelectorAll<HTMLElement>('.rise');
 
-      if (reduce || !('IntersectionObserver' in window)) {
-        items.forEach((el) => el.classList.add('in'));
-      } else {
+      // — reveal on scroll —
+      function setupReveals() {
+        const items = document.querySelectorAll<HTMLElement>('.rise:not(.in)');
+        if (!items.length) return;
+        if (reduce || !('IntersectionObserver' in window)) {
+          items.forEach((el) => el.classList.add('in'));
+          return;
+        }
         const io = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
@@ -97,6 +121,89 @@ const ogImage = new URL('/og.jpg', origin).href;
           io.observe(el);
         });
       }
+
+      // — count-up on ledger figures —
+      // A one-time tally as each figure enters view. Delight on a rarely-seen
+      // element, per the animation-frequency rule. Reduced motion shows the
+      // final value with no count.
+      function setupCounters() {
+        if (reduce || !('IntersectionObserver' in window)) return;
+        const counters = document.querySelectorAll<HTMLElement>('[data-countup]:not([data-counted])');
+        if (!counters.length) return;
+        const runCount = (el: HTMLElement) => {
+          el.setAttribute('data-counted', '');
+          const final = (el.textContent || '').trim();
+          const match = final.match(/[\d.,]*\d/);
+          if (!match) return;
+          const numStr = match[0];
+          const sep = numStr.includes(',') ? ',' : /\.\d{3}(?!\d)/.test(numStr) ? '.' : '';
+          const target = parseInt(numStr.replace(/[.,]/g, ''), 10);
+          if (!isFinite(target) || target <= 0) return;
+          const prefix = final.slice(0, match.index ?? 0);
+          const suffix = final.slice((match.index ?? 0) + numStr.length);
+          const group = (n: number) => {
+            const s = Math.round(n).toString();
+            return sep ? s.replace(/\B(?=(\d{3})+(?!\d))/g, sep) : s;
+          };
+          const dur = 900;
+          const t0 = performance.now();
+          const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+          const step = (now: number) => {
+            const t = Math.min(1, (now - t0) / dur);
+            el.textContent = prefix + group(target * easeOut(t)) + suffix;
+            if (t < 1) requestAnimationFrame(step);
+            else el.textContent = final;
+          };
+          requestAnimationFrame(step);
+        };
+        const cio = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              runCount(entry.target as HTMLElement);
+              cio.unobserve(entry.target);
+            });
+          },
+          { threshold: 0.6 }
+        );
+        counters.forEach((el) => cio.observe(el));
+      }
+
+      // — reading-progress rail —
+      // Scroll-driven, transform only. Re-queries the fill each frame so it keeps
+      // working after the body is swapped by a transition. Reports position, so
+      // it stays on under reduced motion.
+      function paintRail() {
+        const rail = document.getElementById('scroll-rail-fill');
+        if (!rail) return;
+        const root = document.documentElement;
+        const max = root.scrollHeight - root.clientHeight;
+        const p = max > 0 ? Math.min(1, Math.max(0, root.scrollTop / max)) : 0;
+        rail.style.transform = `scaleX(${p})`;
+      }
+
+      // Scroll/resize listeners are attached once for the whole session.
+      if (!(window as any).__aldoScroll) {
+        (window as any).__aldoScroll = true;
+        let queued = false;
+        const onScroll = () => {
+          if (queued) return;
+          queued = true;
+          requestAnimationFrame(() => {
+            paintRail();
+            queued = false;
+          });
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+      }
+
+      // Fires on the first load and after every client-side navigation.
+      document.addEventListener('astro:page-load', () => {
+        setupReveals();
+        setupCounters();
+        paintRail();
+      });
     </script>
   </body>
 </html>

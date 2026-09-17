@@ -12,14 +12,17 @@ const c = t(lang);
 <section class="hero">
   <div class="shell hero__inner">
     <p class="eyebrow rise">{c.hero.location}</p>
-    <h1 class="hero__name rise">Aldo<span class="hero__surname">Rizona</span></h1>
+    <h1 class="hero__name">
+      <span class="hero__line" style="--i: 0">Aldo</span>
+      <span class="hero__line hero__surname" style="--i: 1">Rizona</span>
+    </h1>
     <p class="hero__thesis rise">{c.hero.thesis}</p>
 
     <dl class="ledger rise">
       {
         c.hero.stats.map((s) => (
           <div class="ledger__item">
-            <dt class="ledger__value">{s.value}</dt>
+            <dt class="ledger__value" data-countup>{s.value}</dt>
             <dd class="ledger__label">{s.label}</dd>
           </div>
         ))
@@ -76,6 +79,19 @@ const c = t(lang);
     inset: 0;
     background: radial-gradient(90% 70% at 10% 6%, rgba(201, 162, 39, 0.07), transparent 60%);
     pointer-events: none;
+    /* A slow breath in the lighting. Transform + opacity only; decorative,
+       so it is switched off entirely under reduced motion. */
+    animation: heroGlow 17s var(--ease-in-out) infinite alternate;
+  }
+  @keyframes heroGlow {
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: translate3d(3%, 2%, 0) scale(1.07);
+      opacity: 0.72;
+    }
   }
   .hero__inner {
     position: relative;
@@ -110,6 +126,21 @@ const c = t(lang);
     color: var(--gold);
     line-height: 1.06;
     padding-bottom: 0.06em;
+  }
+  /* Name is set line by line, as if entered into the record. Opacity + a small
+     lift only, so italic descenders never get clipped. Runs on load. */
+  .hero__line {
+    display: block;
+    opacity: 0;
+    transform: translateY(0.42em);
+    animation: lineIn 720ms var(--ease-out) forwards;
+    animation-delay: calc(var(--i) * 90ms + 60ms);
+  }
+  @keyframes lineIn {
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
   .hero__thesis {
     font-family: var(--display);
@@ -300,6 +331,14 @@ const c = t(lang);
     .hero__enter:active,
     .index__row:hover .index__arrow {
       transform: none;
+    }
+    .hero__line {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+    .hero::after {
+      animation: none;
     }
   }
 </style>

@@ -109,6 +109,7 @@ const items: PageKey[] = ['index', 'security', 'open-source', 'projects', 'about
     display: none;
   }
   .nav__link {
+    position: relative;
     font-family: var(--mono);
     font-size: 0.72rem;
     letter-spacing: 0.14em;
@@ -116,14 +117,27 @@ const items: PageKey[] = ['index', 'security', 'open-source', 'projects', 'about
     color: var(--bone-dim);
     white-space: nowrap;
     padding-block: 6px;
-    border-bottom: 1px solid transparent;
-    transition:
-      color var(--dur-hover) ease,
-      border-color var(--dur-hover) ease;
+    transition: color var(--dur-hover) ease;
+  }
+  /* Underline slides in from the left; scaleX stays on the compositor where a
+     width transition would not. The active page keeps it drawn. */
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-hover) var(--ease-out);
   }
   .nav__link.is-active {
     color: var(--gold-lit);
-    border-bottom-color: var(--gold);
+  }
+  .nav__link.is-active::after {
+    transform: scaleX(1);
   }
 
   /* — language toggle — */
@@ -159,6 +173,9 @@ const items: PageKey[] = ['index', 'security', 'open-source', 'projects', 'about
     .nav__link:hover {
       color: var(--bone);
     }
+    .nav__link:hover::after {
+      transform: scaleX(1);
+    }
     .lang__opt:hover:not(.is-on) {
       color: var(--bone);
       background: var(--ink-raise);
@@ -167,7 +184,8 @@ const items: PageKey[] = ['index', 'security', 'open-source', 'projects', 'about
 
   @media (prefers-reduced-motion: reduce) {
     .nav__link,
-    .lang__opt {
+    .lang__opt,
+    .nav__link::after {
       transition: none;
     }
     .nav__link:active,

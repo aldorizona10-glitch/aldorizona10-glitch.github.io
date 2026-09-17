@@ -3,7 +3,7 @@
 
 export const profile = {
   name: 'Aldo Rizona',
-  email: 'aldorizona03@gmail.com',
+  email: 'aldorizona10@gmail.com',
   github: 'https://github.com/aldorizona10-glitch',
   githubHandle: 'aldorizona10-glitch',
   hackerone: 'https://hackerone.com/xauud/hacktivity?type=user',

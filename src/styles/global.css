@@ -247,6 +247,26 @@ h3 {
   }
 }
 
+/* ---------- reading progress (top rail) ----------
+   A thin gold line that fills as the page is read, top to bottom.
+   Scroll-driven, so it stays even under reduced-motion: it reports
+   position, it does not perform. Only transform animates. */
+.scroll-rail {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 60;
+  pointer-events: none;
+  background: var(--hair-faint);
+}
+.scroll-rail__fill {
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--oxblood), var(--gold) 55%, var(--gold-lit));
+  will-change: transform;
+}
+
 /* ---------- responsive: collapse the rail ---------- */
 @media (max-width: 900px) {
   :root {
