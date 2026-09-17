@@ -74,6 +74,11 @@ type Dict = {
     details: Record<PressId, string>;
     read: string;
     note: string;
+    craftMark: string;
+    craftRail: string;
+    craftTitle: string;
+    craftNote: string;
+    craftAreas: { name: string; detail: string }[];
   };
   footer: {
     mark: string;
@@ -256,12 +261,23 @@ const en: Dict = {
     },
     read: 'Read',
     note: 'Searching my name returns an AI overview and the coverage above. The vulnerability class is public through that press. The reproduction is not.',
+    craftMark: 'Craft',
+    craftRail: 'What I<br />work in',
+    craftTitle: 'The <em>disciplines</em> behind the record',
+    craftNote:
+      'This site is the shortest proof I can offer: I designed, built, and animated the interface you are reading now, front to back.',
+    craftAreas: [
+      { name: 'Security research', detail: 'Broken access control, LLM and agent security, resource exhaustion.' },
+      { name: 'Interface and UI/UX', detail: 'Design systems, motion, and accessibility. This site included.' },
+      { name: 'Front-end', detail: 'Astro, semantic HTML and CSS, dependency-free vanilla JS.' },
+      { name: 'Back-end and automation', detail: 'Node and Python services, ops tooling, scripting.' },
+    ],
   },
   footer: {
     mark: 'Penutup, closing provisions',
     title: 'Open for <em>work</em>',
     blurb:
-      'Freelance security review, backend and automation work, and junior or internship roles in application security. If a system is interesting, I would rather look at it than talk about it.',
+      'Freelance security review, interface and front-end work, backend and automation, and junior or internship roles in application security. If a system is interesting, I would rather look at it than talk about it.',
     labels: { email: 'Email' },
     colophon: [
       'Set in Bodoni Moda and IBM Plex. Lattice after Minangkabau songket.',
@@ -442,12 +458,23 @@ const id: Dict = {
     },
     read: 'Baca',
     note: 'Mencari nama saya memunculkan ringkasan AI dan liputan di atas. Kelas kerentanannya publik lewat pemberitaan itu. Langkah reproduksinya tidak.',
+    craftMark: 'Keahlian',
+    craftRail: 'Yang saya<br />kerjakan',
+    craftTitle: '<em>Disiplin</em> di balik catatan',
+    craftNote:
+      'Situs ini bukti paling ringkas yang bisa saya tunjukkan: saya sendiri yang mendesain, membangun, dan menganimasikan antarmuka yang sedang Anda baca, dari depan sampai belakang.',
+    craftAreas: [
+      { name: 'Riset keamanan', detail: 'Broken access control, keamanan LLM dan agent, kehabisan sumber daya.' },
+      { name: 'Antarmuka dan UI/UX', detail: 'Design system, animasi, dan aksesibilitas. Termasuk situs ini.' },
+      { name: 'Front-end', detail: 'Astro, HTML dan CSS semantik, JavaScript vanilla tanpa dependensi.' },
+      { name: 'Back-end dan otomasi', detail: 'Layanan Node dan Python, tooling operasional, scripting.' },
+    ],
   },
   footer: {
     mark: 'Penutup, ketentuan penutup',
     title: 'Terbuka untuk <em>kerja</em>',
     blurb:
-      'Security review lepas, pekerjaan backend dan otomasi, serta peran junior atau magang di keamanan aplikasi. Kalau sebuah sistem menarik, saya lebih suka memeriksanya daripada membicarakannya.',
+      'Security review lepas, pekerjaan antarmuka dan front-end, backend dan otomasi, serta peran junior atau magang di keamanan aplikasi. Kalau sebuah sistem menarik, saya lebih suka memeriksanya daripada membicarakannya.',
     labels: { email: 'Surel' },
     colophon: [
       'Huruf Bodoni Moda dan IBM Plex. Kisi bermotif songket Minangkabau.',
