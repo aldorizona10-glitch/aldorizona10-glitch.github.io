@@ -38,7 +38,7 @@ export const pullRequests: PR[] = [
   { repo: 'arrow-py/arrow', number: '#1335', url: 'https://github.com/arrow-py/arrow/pull/1335', merged: false, group: 'other' },
 ];
 
-export type ProjectId = 'ledgerline' | 'injectlab' | 'quickops';
+export type ProjectId = 'rapikan' | 'ledgerline' | 'injectlab' | 'quickops';
 
 // Admission rule, deliberately strict: a project appears here only if a
 // stranger can open it and judge it. Anything unpublished, or thin enough
@@ -51,6 +51,13 @@ export const projects: {
   demo?: string;
   shot?: { src: string; alt: string };
 }[] = [
+  {
+    id: 'rapikan',
+    name: 'Rapikan',
+    tags: ['Applied LLM', 'Claude API'],
+    repo: 'https://github.com/aldorizona10-glitch/rapikan',
+    demo: 'https://claude.ai/code/artifact/fc3ef796-3760-4435-bc63-568264d157ea',
+  },
   {
     id: 'ledgerline',
     name: 'Ledgerline',

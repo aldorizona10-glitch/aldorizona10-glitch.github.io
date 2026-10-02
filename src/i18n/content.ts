@@ -140,7 +140,7 @@ const en: Dict = {
     rows: [
       { page: 'security', mark: 'Pasal I', title: 'Security', teaser: 'Two findings on two AI platforms. One rewarded, one published. Both verifiable by a stranger.', stat: '$2,500 + 1 published' },
       { page: 'open-source', mark: 'Pasal II', title: 'Open source', teaser: 'Seven pull requests merged into repositories I do not own, three of them into WordPress.', stat: '7 merged' },
-      { page: 'projects', mark: 'Pasal III', title: 'Projects', teaser: 'A short list on purpose. Only published work, each with source you can open.', stat: '3 published' },
+      { page: 'projects', mark: 'Pasal III', title: 'Projects', teaser: 'A short list on purpose. Only published work, each with source you can open.', stat: '4 published' },
       { page: 'about', mark: 'Pasal IV', title: 'About', teaser: 'A final-year law student who reads software the way he reads statutes.', stat: 'The reasoning' },
     ],
   },
@@ -223,6 +223,8 @@ const en: Dict = {
     intro:
       'A short list on purpose. Only work that is published, still standing, and open for you to judge appears here.',
     blurbs: {
+      rapikan:
+        'A live applied-LLM tool that turns messy business text (orders, tickets, receipts, leads) into structured records, each field backed by a verbatim source quote, gaps flagged, and nothing used without human approval. The model runs in-page; no backend.',
       ledgerline:
         'A privacy-first invoice studio that runs entirely in the browser. Build an invoice, print a clean PDF, upload nothing. One file, zero dependencies, works offline.',
       injectlab:
@@ -337,7 +339,7 @@ const id: Dict = {
     rows: [
       { page: 'security', mark: 'Pasal I', title: 'Keamanan', teaser: 'Dua temuan di dua platform AI. Satu dibayar, satu dipublikasikan. Keduanya bisa dicek orang lain.', stat: '$2.500 + 1 terbit' },
       { page: 'open-source', mark: 'Pasal II', title: 'Open source', teaser: 'Tujuh pull request di-merge ke repositori milik pihak lain, tiga di antaranya ke WordPress.', stat: '7 di-merge' },
-      { page: 'projects', mark: 'Pasal III', title: 'Karya', teaser: 'Daftarnya sengaja pendek. Hanya karya terbit, masing-masing dengan kode yang bisa dibuka.', stat: '3 terbit' },
+      { page: 'projects', mark: 'Pasal III', title: 'Karya', teaser: 'Daftarnya sengaja pendek. Hanya karya terbit, masing-masing dengan kode yang bisa dibuka.', stat: '4 terbit' },
       { page: 'about', mark: 'Pasal IV', title: 'Tentang', teaser: 'Mahasiswa hukum tingkat akhir yang membaca perangkat lunak seperti membaca undang-undang.', stat: 'Alasannya' },
     ],
   },
@@ -420,6 +422,8 @@ const id: Dict = {
     intro:
       'Daftarnya sengaja pendek. Hanya karya yang sudah terbit, masih berdiri, dan terbuka untuk Anda nilai yang masuk ke sini.',
     blurbs: {
+      rapikan:
+        'Alat applied-LLM langsung yang mengubah teks bisnis berantakan (order, tiket, struk, lead) menjadi record terstruktur, tiap kolom disertai kutipan sumber persis, kolom kosong ditandai, dan tidak ada yang dipakai tanpa persetujuan manusia. Modelnya jalan di dalam halaman; tanpa backend.',
       ledgerline:
         'Studio invoice yang mengutamakan privasi dan berjalan sepenuhnya di browser. Susun invoice, cetak PDF rapi, tanpa mengunggah apa pun. Satu berkas, nol dependensi, jalan offline.',
       injectlab:
