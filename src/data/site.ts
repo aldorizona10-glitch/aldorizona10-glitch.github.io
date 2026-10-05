@@ -56,7 +56,7 @@ export const projects: {
     name: 'Rapikan',
     tags: ['Applied LLM', 'Claude API'],
     repo: 'https://github.com/aldorizona10-glitch/rapikan',
-    demo: 'https://claude.ai/code/artifact/fc3ef796-3760-4435-bc63-568264d157ea',
+    demo: 'https://aldorizona10-glitch.github.io/rapikan/',
   },
   {
     id: 'ledgerline',
