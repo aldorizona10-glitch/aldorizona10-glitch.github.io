@@ -40,3 +40,4 @@ npm run preview  # preview the build
 
 Pushing to `main` triggers [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which
 builds with the official Astro action and publishes to GitHub Pages.
+
