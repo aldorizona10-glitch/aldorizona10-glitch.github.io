@@ -1,0 +1,25 @@
+---
+// The site used to be five pages. Old links (CVs, profiles, search results)
+// still point at them, so each old route forwards to its section.
+interface Props {
+  to: string;
+}
+const { to } = Astro.props;
+const href = new URL(to, Astro.site ?? 'https://aldorizona10-glitch.github.io').href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Moved</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={href} />
+    <meta http-equiv="refresh" content={`0; url=${to}`} />
+    <script is:inline define:vars={{ to }}>location.replace(to);</script>
+  </head>
+  <body>
+    <p><a href={to}>{href}</a></p>
+  </body>
+</html>

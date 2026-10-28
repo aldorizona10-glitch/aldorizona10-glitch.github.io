@@ -1,0 +1,128 @@
+---
+import { profile, projects } from '../data/site';
+import { t } from '../i18n/content';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+const r = c.replay;
+const rapikan = projects.find((p) => p.id === 'rapikan')!;
+
+// Wrap every quoted span of the message in a <mark>, so a field can point
+// at the exact words it was taken from. Quotes are verbatim substrings.
+type Piece = { text: string; q?: number };
+const quotes = r.fields.flatMap((f) => f.quotes);
+const hits = quotes
+  .map((q, i) => ({ i, start: r.message.indexOf(q), end: r.message.indexOf(q) + q.length }))
+  .filter((h) => h.start >= 0)
+  .sort((a, b) => a.start - b.start);
+const pieces: Piece[] = [];
+let cursor = 0;
+for (const h of hits) {
+  if (h.start > cursor) pieces.push({ text: r.message.slice(cursor, h.start) });
+  pieces.push({ text: r.message.slice(h.start, h.end), q: h.i });
+  cursor = h.end;
+}
+if (cursor < r.message.length) pieces.push({ text: r.message.slice(cursor) });
+
+let qIndex = 0;
+const fields = r.fields.map((f) => ({ ...f, ids: f.quotes.map(() => qIndex++) }));
+const proofHref = (k: 'hackerone' | 'wpMergedSearch' | 'wordpress') => profile[k];
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <h1 class="hero__title" id="hero-title">
+        {
+          c.hero.lines.map((line, i) => (
+            <span class="line">
+              <span class="line__in" style={`--i:${i}`}>
+                {line}
+              </span>
+            </span>
+          ))
+        }
+      </h1>
+      <p class="hero__intro">{c.hero.intro}</p>
+      <div class="hero__cta">
+        <a class="btn btn--ink" href="#work" data-magnetic><span>{c.hero.ctaWork}</span></a>
+        <a class="btn btn--line" href={`mailto:${profile.email}`} data-magnetic><span>{c.hero.ctaEmail}</span></a>
+      </div>
+    </div>
+
+    <figure class="replay" data-replay aria-labelledby="replay-title">
+      <div class="replay__sheet">
+        <h2 class="replay__title" id="replay-title">{r.title}</h2>
+
+        <div class="replay__msg">
+          <p class="replay__label">{r.messageLabel}</p>
+          <p class="bubble" data-message>
+            {pieces.map((p) => (p.q === undefined ? p.text : <mark data-q={p.q}>{p.text}</mark>))}
+          </p>
+        </div>
+
+        <div class="replay__record">
+          <p class="replay__label">{r.recordLabel}</p>
+          <ul class="fields">
+            {
+              fields.map((f) => (
+                <li class="field" tabindex="0" data-field data-quotes={f.ids.join(',')}>
+                  <span class="field__label">{f.label}</span>
+                  <span class="field__main">
+                    <span class="field__value">{f.value}</span>
+                    {f.quotes.map((q) => (
+                      <q class="chip">{q}</q>
+                    ))}
+                  </span>
+                </li>
+              ))
+            }
+            <li class="field field--inferred" data-field>
+              <span class="field__label">{r.inferred.label}</span>
+              <span class="field__main">
+                <span class="field__value">{r.inferred.value}</span>
+                <span class="field__note">{r.inferred.note}</span>
+              </span>
+            </li>
+          </ul>
+          <p class="flag" data-flag>{r.flag}</p>
+        </div>
+
+        <div class="replay__gate">
+          <p class="replay__status" aria-live="polite" data-status data-waiting={r.waiting} data-approved={r.approved}>
+            {r.waiting}
+          </p>
+          <button class="btn btn--stamp" type="button" data-approve data-label-approve={r.approve} data-label-again={r.again}>
+            <span>{r.approve}</span>
+          </button>
+        </div>
+
+        <div class="stamp" aria-hidden="true" data-stamp>
+          <span>{r.stamp}</span>
+        </div>
+        <svg class="wires" aria-hidden="true" data-wires></svg>
+      </div>
+      <figcaption class="replay__caption">
+        {r.caption}{' '}
+        <a href={rapikan.demo}>{r.captionLink}</a>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap">
+    <ul class="proof">
+      {
+        c.proof.map((p) => (
+          <li>
+            <p>{p.text}</p>
+            <a href={proofHref(p.href)}>{p.link}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

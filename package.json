@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "description": "Personal site for Aldo Rizona — security researcher, Padang, Indonesia.",
+  "description": "Portfolio of Aldo Rizona, AI and automation engineer in Padang, Indonesia.",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -11,9 +11,8 @@
     "check": "astro check"
   },
   "dependencies": {
-    "astro": "^5.6.1",
-    "@fontsource/bodoni-moda": "^5.1.0",
-    "@fontsource/ibm-plex-sans": "^5.1.0",
-    "@fontsource/ibm-plex-mono": "^5.1.0"
+    "@fontsource-variable/archivo": "5.3.0",
+    "astro": "5.18.2",
+    "lenis": "1.3.27"
   }
 }

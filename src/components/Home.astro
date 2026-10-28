@@ -1,0 +1,21 @@
+---
+import Hero from './Hero.astro';
+import Work from './Work.astro';
+import OpenSource from './OpenSource.astro';
+import Security from './Security.astro';
+import About from './About.astro';
+import Contact from './Contact.astro';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<Hero lang={lang} />
+<Work lang={lang} />
+<OpenSource lang={lang} />
+<Security lang={lang} />
+<About lang={lang} />
+<Contact lang={lang} />

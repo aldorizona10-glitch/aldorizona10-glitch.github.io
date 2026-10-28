@@ -1,0 +1,80 @@
+---
+import { profile, projects } from '../data/site';
+import { t } from '../i18n/content';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+---
+
+<section class="sec work" id="work" aria-labelledby="work-title">
+  <div class="wrap">
+    <header class="sec__head">
+      <h2 class="sec__title" id="work-title" data-stretch>{c.work.title}</h2>
+      <p class="sec__intro">{c.work.intro}</p>
+    </header>
+
+    <ol class="projects" data-projects>
+      {
+        projects.map((p) => {
+          const copy = c.work.items[p.id];
+          const facts = c.work.facts[p.id];
+          return (
+            <li class="proj" data-proj={p.id}>
+              <h3 class="proj__head">
+                <button class="proj__toggle" type="button" aria-expanded="false" aria-controls={`proj-${p.id}`}>
+                  <span class="proj__name">{p.name}</span>
+                  <span class="proj__kind">{copy.kind}</span>
+                  <span class="proj__stack">{p.stack}</span>
+                  <span class="proj__icon" aria-hidden="true" />
+                </button>
+              </h3>
+              <p class="proj__summary">{copy.summary}</p>
+              <div class="proj__panel" id={`proj-${p.id}`} role="region" aria-label={p.name}>
+                <div class="proj__panel-in">
+                  <div class="proj__body">
+                    <p>{copy.detail}</p>
+                    <p class="proj__links">
+                      {p.demo && (
+                        <a class="btn btn--ink btn--sm" href={p.demo}>
+                          <span>{c.work.demo}</span>
+                        </a>
+                      )}
+                      <a class="btn btn--line btn--sm" href={p.repo}>
+                        <span>{c.work.source}</span>
+                      </a>
+                    </p>
+                  </div>
+                  <div class="proj__preview" data-preview>
+                    {p.preview.kind === 'image' ? (
+                      <img
+                        src={p.preview.src}
+                        width={p.preview.w}
+                        height={p.preview.h}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <ul class="facts">
+                        {facts?.map((f) => (
+                          <li>{f}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ol>
+
+    <p class="sec__more"><a href={profile.github}>{c.work.all}</a></p>
+  </div>
+  <div class="peek" aria-hidden="true" data-peek></div>
+</section>

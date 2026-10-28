@@ -1,0 +1,50 @@
+---
+import { profile, pullRequests } from '../data/site';
+import { t } from '../i18n/content';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+
+// Group by repository, keeping the order the data lists them in.
+const groups = new Map<string, typeof pullRequests>();
+for (const pr of pullRequests) {
+  if (!groups.has(pr.repo)) groups.set(pr.repo, []);
+  groups.get(pr.repo)!.push(pr);
+}
+---
+
+<section class="sec oss" id="open-source" aria-labelledby="oss-title">
+  <div class="wrap oss__grid">
+    <header class="sec__head oss__head">
+      <h2 class="sec__title" id="oss-title" data-stretch>{c.oss.title}</h2>
+      <p class="sec__intro">{c.oss.intro}</p>
+      <p class="sec__more"><a href={profile.wordpress}>{c.oss.profile}</a></p>
+    </header>
+
+    <div class="oss__list">
+      {
+        [...groups.entries()].map(([repo, prs]) => (
+          <div class="repo">
+            <h3 class="repo__name">{repo}</h3>
+            <ul class="prs">
+              {prs.map((pr) => (
+                <li class:list={['pr', { 'pr--open': !pr.merged }]}>
+                  <a href={pr.url}>
+                    <span class="pr__num">{pr.number}</span>
+                    <span class="pr__change">{c.oss.changes[pr.number]}</span>
+                    <span class="pr__state">{pr.merged ? c.oss.merged : c.oss.inReview}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+      <p class="oss__note">{c.oss.note}</p>
+    </div>
+  </div>
+</section>

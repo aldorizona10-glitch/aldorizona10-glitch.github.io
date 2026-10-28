@@ -1,31 +1,40 @@
 # aldorizona10-glitch.github.io
 
-Personal site for **Aldo Rizona** — final-year Constitutional Law student and self-taught
-security researcher, Padang, Indonesia.
+Portfolio of **Aldo Rizona**, AI and automation engineer in Padang, Indonesia.
 
-**Live:** https://aldorizona10-glitch.github.io/
+**Live:** https://aldorizona10-glitch.github.io/ (English) and https://aldorizona10-glitch.github.io/id/ (Bahasa Indonesia)
 
 ## What this is
 
-A multi-page portfolio built with [Astro](https://astro.build). Zero client-side framework;
-the only JavaScript shipped is a small scroll-reveal observer. Every factual claim is centralised
-in [`src/data/site.ts`](src/data/site.ts) and linked to a source a stranger can verify.
+A single-page portfolio built with [Astro](https://astro.build). The hero replays
+[Rapikan](https://aldorizona10-glitch.github.io/rapikan/)'s sample order: each extracted field
+points back at the words it came from, a missing value is flagged, and nothing is final until a
+person presses approve. That is the idea behind most of the work listed on the page.
 
-| Page            | Route           |
-| --------------- | --------------- |
-| Index           | `/`             |
-| Security        | `/security`     |
-| Open source     | `/open-source`  |
-| Projects        | `/projects`     |
-| About & press   | `/about`        |
+Every factual claim lives in [`src/data/site.ts`](src/data/site.ts) or
+[`src/i18n/content.ts`](src/i18n/content.ts) and links to a source a stranger can check.
+Open pull requests are shown as open, never as merged.
+
+| Section       | Anchor          |
+| ------------- | --------------- |
+| Replay, proof | `/#top`         |
+| Work          | `/#work`        |
+| Open source   | `/#open-source` |
+| Security      | `/#security`    |
+| About         | `/#about`       |
+| Contact       | `/#contact`     |
+
+The old routes (`/projects`, `/security`, `/open-source`, `/about`, and their `/id/` versions)
+forward to these anchors, so links in old CVs keep working.
 
 ## Design
 
-Structure borrows from an Indonesian legal instrument — sections are numbered as *Pasal*, with the
-number set in a hanging left margin. The hero lattice is drawn after Minangkabau *songket*.
-Type is **Bodoni Moda** (display) with **IBM Plex Sans / Mono**, self-hosted via
-[`@fontsource`](https://fontsource.org) so nothing is fetched from a CDN at runtime. A single,
-deliberately dark palette: aubergine ink, antique gold, bone.
+- Palette: stone paper, ink, highlighter yellow for evidence, reviewer red for what is missing,
+  office-stamp violet for what a person approved.
+- Type: Archivo, self-hosted through `@fontsource-variable`. Headlines use its width axis.
+- Motion: one load sequence, the replay, a cursor-following preview on project rows, magnetic
+  buttons, and smooth scrolling through [Lenis](https://github.com/darkroomengineering/lenis).
+  All of it switches off under `prefers-reduced-motion`, and the page reads fine without JavaScript.
 
 ## Develop
 
@@ -39,5 +48,4 @@ npm run preview  # preview the build
 ## Deploy
 
 Pushing to `main` triggers [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which
-builds with the official Astro action and publishes to GitHub Pages.
-
+installs the pinned dependencies, builds the site and publishes `dist/` to GitHub Pages.

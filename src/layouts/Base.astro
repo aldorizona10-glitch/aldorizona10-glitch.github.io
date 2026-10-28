@@ -1,34 +1,23 @@
 ---
 // Self-hosted via @fontsource, bundled at build time. No runtime CDN request.
-import '@fontsource/bodoni-moda/latin-400.css';
-import '@fontsource/bodoni-moda/latin-400-italic.css';
-import '@fontsource/bodoni-moda/latin-500.css';
-import '@fontsource/bodoni-moda/latin-500-italic.css';
-import '@fontsource/ibm-plex-sans/latin-300.css';
-import '@fontsource/ibm-plex-sans/latin-400.css';
-import '@fontsource/ibm-plex-sans/latin-500.css';
-import '@fontsource/ibm-plex-sans/latin-600.css';
-import '@fontsource/ibm-plex-mono/latin-400.css';
-import '@fontsource/ibm-plex-mono/latin-500.css';
-
+// "standard" carries both the weight and the width axis; the width axis is
+// what the headlines lean on.
+import '@fontsource-variable/archivo/standard.css';
+import '@fontsource-variable/archivo/standard-italic.css';
 import '../styles/global.css';
-import { ClientRouter } from 'astro:transitions';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
 import { profile } from '../data/site';
 import { t } from '../i18n/content';
-import { pathFor, LOCALES, DEFAULT_LOCALE, type Lang, type PageKey } from '../i18n/config';
+import { homeFor, LOCALES, DEFAULT_LOCALE, type Lang } from '../i18n/config';
 
 interface Props {
   lang: Lang;
-  page: PageKey;
 }
-const { lang, page } = Astro.props;
+const { lang } = Astro.props;
 const c = t(lang);
-const meta = c.meta[page];
 
 const origin = (Astro.site ?? new URL(profile.siteUrl)).origin;
-const canonical = new URL(pathFor(page, lang), origin).href;
+const canonical = new URL(homeFor(lang), origin).href;
 // Absolute: link previews reject relative image paths.
 const ogImage = new URL('/og.jpg', origin).href;
 ---
@@ -38,172 +27,49 @@ const ogImage = new URL('/og.jpg', origin).href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{meta.title}</title>
-    <meta name="description" content={meta.description} />
+    <title>{c.meta.title}</title>
+    <meta name="description" content={c.meta.description} />
     <meta name="author" content={profile.name} />
-    <meta name="theme-color" content="#12101A" />
+    <meta name="theme-color" content="#ECEDE8" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-
-    {
-      LOCALES.map((code) => (
-        <link rel="alternate" hreflang={code} href={new URL(pathFor(page, code), origin).href} />
-      ))
-    }
-    <link rel="alternate" hreflang="x-default" href={new URL(pathFor(page, DEFAULT_LOCALE), origin).href} />
+    {LOCALES.map((code) => <link rel="alternate" hreflang={code} href={new URL(homeFor(code), origin).href} />)}
+    <link rel="alternate" hreflang="x-default" href={new URL(homeFor(DEFAULT_LOCALE), origin).href} />
 
     <meta property="og:type" content="profile" />
-    <meta property="og:title" content={meta.title} />
-    <meta property="og:description" content={meta.description} />
+    <meta property="og:title" content={c.meta.title} />
+    <meta property="og:description" content={c.meta.description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content={lang === 'id' ? 'id_ID' : 'en_US'} />
+    <meta property="og:locale" content={c.ogLocale} />
     <meta property="og:site_name" content={profile.name} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`${profile.name}. Security research, open source, and constitutional law.`} />
+    <meta property="og:image:alt" content={c.meta.ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={meta.title} />
-    <meta name="twitter:description" content={meta.description} />
+    <meta name="twitter:title" content={c.meta.title} />
+    <meta name="twitter:description" content={c.meta.description} />
     <meta name="twitter:image" content={ogImage} />
 
-    {/* Animated client-side navigation between pages. */}
-    <ClientRouter />
-
-    {/* Without JS the reveal never fires, so guarantee content is visible. */}
-    <noscript>
-      <style>
-        .rise {
-          opacity: 1 !important;
-          transform: none !important;
-        }
-      </style>
-    </noscript>
+    <script is:inline>
+      // Mark JS early so pre-animation states never hide content for no-JS visitors.
+      document.documentElement.classList.add('js');
+    </script>
   </head>
   <body>
-    <div class="scroll-rail" aria-hidden="true">
-      <div class="scroll-rail__fill" id="scroll-rail-fill"></div>
-    </div>
     <a class="skip" href="#main">{c.a11y.skip}</a>
-    <Nav lang={lang} page={page} />
+    <Header lang={lang} />
     <main id="main">
       <slot />
     </main>
-    <Footer lang={lang} />
-
+    <footer class="foot">
+      <div class="wrap foot__inner">
+        <p>{profile.name}, Padang, {new Date().getFullYear()}</p>
+        <p>{c.footer}</p>
+      </div>
+    </footer>
     <script>
-      // Reveal-on-scroll, reading-progress rail, and ledger count-up.
-      // Wrapped in functions and driven by `astro:page-load` so every effect
-      // re-arms after a View Transition, not only on the first hard load.
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      // — reveal on scroll —
-      function setupReveals() {
-        const items = document.querySelectorAll<HTMLElement>('.rise:not(.in)');
-        if (!items.length) return;
-        if (reduce || !('IntersectionObserver' in window)) {
-          items.forEach((el) => el.classList.add('in'));
-          return;
-        }
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (!entry.isIntersecting) return;
-              entry.target.classList.add('in');
-              io.unobserve(entry.target);
-            });
-          },
-          { rootMargin: '0px 0px -10% 0px', threshold: 0.08 }
-        );
-        // Short stagger: long delays read as a slow page, not a considered one.
-        items.forEach((el, i) => {
-          el.style.transitionDelay = `${(i % 5) * 45}ms`;
-          io.observe(el);
-        });
-      }
-
-      // — count-up on ledger figures —
-      // A one-time tally as each figure enters view. Delight on a rarely-seen
-      // element, per the animation-frequency rule. Reduced motion shows the
-      // final value with no count.
-      function setupCounters() {
-        if (reduce || !('IntersectionObserver' in window)) return;
-        const counters = document.querySelectorAll<HTMLElement>('[data-countup]:not([data-counted])');
-        if (!counters.length) return;
-        const runCount = (el: HTMLElement) => {
-          el.setAttribute('data-counted', '');
-          const final = (el.textContent || '').trim();
-          const match = final.match(/[\d.,]*\d/);
-          if (!match) return;
-          const numStr = match[0];
-          const sep = numStr.includes(',') ? ',' : /\.\d{3}(?!\d)/.test(numStr) ? '.' : '';
-          const target = parseInt(numStr.replace(/[.,]/g, ''), 10);
-          if (!isFinite(target) || target <= 0) return;
-          const prefix = final.slice(0, match.index ?? 0);
-          const suffix = final.slice((match.index ?? 0) + numStr.length);
-          const group = (n: number) => {
-            const s = Math.round(n).toString();
-            return sep ? s.replace(/\B(?=(\d{3})+(?!\d))/g, sep) : s;
-          };
-          const dur = 900;
-          const t0 = performance.now();
-          const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
-          const step = (now: number) => {
-            const t = Math.min(1, (now - t0) / dur);
-            el.textContent = prefix + group(target * easeOut(t)) + suffix;
-            if (t < 1) requestAnimationFrame(step);
-            else el.textContent = final;
-          };
-          requestAnimationFrame(step);
-        };
-        const cio = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (!entry.isIntersecting) return;
-              runCount(entry.target as HTMLElement);
-              cio.unobserve(entry.target);
-            });
-          },
-          { threshold: 0.6 }
-        );
-        counters.forEach((el) => cio.observe(el));
-      }
-
-      // — reading-progress rail —
-      // Scroll-driven, transform only. Re-queries the fill each frame so it keeps
-      // working after the body is swapped by a transition. Reports position, so
-      // it stays on under reduced motion.
-      function paintRail() {
-        const rail = document.getElementById('scroll-rail-fill');
-        if (!rail) return;
-        const root = document.documentElement;
-        const max = root.scrollHeight - root.clientHeight;
-        const p = max > 0 ? Math.min(1, Math.max(0, root.scrollTop / max)) : 0;
-        rail.style.transform = `scaleX(${p})`;
-      }
-
-      // Scroll/resize listeners are attached once for the whole session.
-      if (!(window as any).__aldoScroll) {
-        (window as any).__aldoScroll = true;
-        let queued = false;
-        const onScroll = () => {
-          if (queued) return;
-          queued = true;
-          requestAnimationFrame(() => {
-            paintRail();
-            queued = false;
-          });
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll, { passive: true });
-      }
-
-      // Fires on the first load and after every client-side navigation.
-      document.addEventListener('astro:page-load', () => {
-        setupReveals();
-        setupCounters();
-        paintRail();
-      });
+      import '../scripts/main.ts';
     </script>
   </body>
 </html>

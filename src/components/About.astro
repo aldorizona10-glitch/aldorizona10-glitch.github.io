@@ -1,0 +1,40 @@
+---
+import { press } from '../data/site';
+import { t } from '../i18n/content';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+const a = c.about;
+---
+
+<section class="sec about" id="about" aria-labelledby="about-title">
+  <div class="wrap about__grid">
+    <div class="about__story">
+      <h2 class="sec__title about__title" id="about-title" data-stretch>{a.title}</h2>
+      <p class="about__lead">{a.lead}</p>
+      {a.body.map((p) => <p>{p}</p>)}
+      <p class="about__edu">{a.education}</p>
+      <p class="about__press">
+        {a.press} <a href={press.url}>{a.pressLink}</a>
+      </p>
+    </div>
+
+    <div class="about__steps">
+      <h3 class="about__steps-title">{a.stepsTitle}</h3>
+      <ol class="steps">
+        {
+          a.steps.map((s) => (
+            <li class="step">
+              <h4 class="step__title">{s.title}</h4>
+              <p class="step__text">{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>

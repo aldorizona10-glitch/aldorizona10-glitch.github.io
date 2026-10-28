@@ -16,3 +16,6 @@ npm-debug.log*
 # os / editor
 .DS_Store
 Thumbs.db
+
+# no lockfile: CI installs from the pinned versions in package.json
+package-lock.json

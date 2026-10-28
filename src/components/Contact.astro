@@ -1,0 +1,45 @@
+---
+import { profile } from '../data/site';
+import { t } from '../i18n/content';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+
+const links = [
+  { label: 'GitHub', href: profile.github },
+  { label: 'LinkedIn', href: profile.linkedin },
+  { label: 'HackerOne', href: profile.hackerone },
+  { label: 'huntr', href: profile.huntr },
+  { label: 'WordPress.org', href: profile.wordpress },
+];
+---
+
+<section class="sec contact" id="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <h2 class="contact__title" id="contact-title" data-stretch>{c.contact.title}</h2>
+    <p class="contact__text">{c.contact.text}</p>
+
+    <div class="contact__mail">
+      <a class="contact__addr" href={`mailto:${profile.email}`}>{profile.email}</a>
+      <button class="btn btn--line btn--sm" type="button" data-copy={profile.email} data-copied={c.contact.copied}>
+        <span>{c.contact.copy}</span>
+      </button>
+    </div>
+
+    <nav class="elsewhere" aria-label={c.contact.elsewhere}>
+      <ul>
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href}>{l.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</section>

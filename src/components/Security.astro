@@ -1,0 +1,83 @@
+---
+import { profile } from '../data/site';
+import { t } from '../i18n/content';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+const s = c.security;
+const L = s.labels;
+
+const findings = [
+  { key: 'xai', target: 'X / xAI', platform: 'HackerOne', url: profile.hackerone, copy: s.xai, sealed: true },
+  { key: 'onnx', target: 'onnx/onnx', platform: 'huntr', url: profile.huntrReport, copy: s.onnx, sealed: false },
+] as const;
+// Bar widths for the sealed block: fixed, so the layout never shifts.
+const bars = [92, 78, 86, 64, 88, 40];
+---
+
+<section class="sec sec--ink security" id="security" aria-labelledby="sec-title">
+  <div class="wrap">
+    <header class="sec__head">
+      <h2 class="sec__title" id="sec-title" data-stretch>{s.title}</h2>
+      <p class="sec__intro">{s.intro}</p>
+    </header>
+
+    <div class="finds">
+      {
+        findings.map((f) => (
+          <article class="find" aria-labelledby={`find-${f.key}`}>
+            <header class="find__head">
+              <h3 class="find__target" id={`find-${f.key}`}>{f.target}</h3>
+              <p class="find__award">{f.copy.award}</p>
+            </header>
+            <p class="find__summary">{f.copy.summary}</p>
+            <dl class="find__spec">
+              <div>
+                <dt>{L.severity}</dt>
+                <dd>{f.copy.severity}</dd>
+              </div>
+              <div>
+                <dt>{L.class}</dt>
+                <dd>{f.copy.class}</dd>
+              </div>
+              <div>
+                <dt>{L.platform}</dt>
+                <dd>{f.platform}</dd>
+              </div>
+              <div>
+                <dt>{L.reported}</dt>
+                <dd>{f.copy.reported}</dd>
+              </div>
+              <div>
+                <dt>{L.status}</dt>
+                <dd>{f.copy.status}</dd>
+              </div>
+            </dl>
+            {f.sealed && (
+              <div class="sealed">
+                <button class="sealed__btn" type="button" aria-expanded="false" aria-controls={`sealed-${f.key}`} data-sealed>
+                  <span class="sealed__bars" aria-hidden="true">
+                    {bars.map((w) => (
+                      <span style={`--w:${w}%`} />
+                    ))}
+                  </span>
+                  <span class="sealed__label">{s.sealedTitle}</span>
+                </button>
+                <p class="sealed__note" id={`sealed-${f.key}`}>
+                  {s.sealed}
+                </p>
+              </div>
+            )}
+            <p class="find__verify">
+              <a href={f.url}>{f.copy.verify}</a>
+            </p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,490 +1,439 @@
-import type { Lang } from './config';
-import type { FindingId, ProjectId, PressId } from '../data/site';
+import type { Lang, SectionId } from './config';
+import type { ProjectId } from '../data/site';
 
-// House style, enforced by the Taste skill pre-flight:
-// no em-dash and no en-dash anywhere in visible copy. Regular hyphen only.
+// House style: no em-dash and no en-dash anywhere in visible copy.
+// Every claim here must match something a stranger can open and check.
 
-type FindingCopy = {
-  status: string;
-  award: string;
-  severity: string;
-  cwe: string;
-  vector: string;
-  platform: string;
-  reported: string;
-  resolution: string;
-  summary: string;
-  detail: string;
-  verifyLabel: string;
-};
+export type Field = { label: string; value: string; quotes: string[] };
 
 type Dict = {
   htmlLang: string;
-  nav: { index: string; security: string; 'open-source': string; projects: string; about: string };
-  a11y: { skip: string; primaryNav: string; contactNav: string; langSwitch: string; home: string };
-  meta: Record<'index' | 'security' | 'open-source' | 'projects' | 'about', { title: string; description: string }>;
+  ogLocale: string;
+  meta: { title: string; description: string; ogAlt: string };
+  a11y: { skip: string; primary: string; lang: string; home: string; details: string };
+  nav: Record<SectionId, string>;
+  emailMe: string;
   hero: {
-    location: string;
-    thesis: string;
-    stats: { value: string; label: string }[];
-    enter: string;
-  };
-  index: { rows: { page: 'security' | 'open-source' | 'projects' | 'about'; mark: string; title: string; teaser: string; stat: string }[] };
-  security: {
-    mark: string;
-    railLabel: string;
-    title: string;
+    lines: string[];
     intro: string;
-    methodMark: string;
-    methodRail: string;
-    methodTitle: string;
-    method: string[];
-    specLabels: { severity: string; class: string; vector: string; platform: string; reported: string; resolution: string };
+    ctaWork: string;
+    ctaEmail: string;
   };
-  findings: Record<FindingId, FindingCopy>;
-  oss: {
-    mark: string;
-    railLabel: string;
+  replay: {
     title: string;
-    intro: string;
+    messageLabel: string;
+    message: string;
+    recordLabel: string;
+    fields: Field[];
+    inferred: { label: string; value: string; note: string };
+    flag: string;
+    waiting: string;
+    approve: string;
+    stamp: string;
+    approved: string;
+    again: string;
     caption: string;
-    cols: { project: string; pr: string; change: string; state: string };
+    captionLink: string;
+  };
+  proof: { text: string; link: string; href: 'hackerone' | 'wpMergedSearch' | 'wordpress' }[];
+  work: {
+    title: string;
+    intro: string;
+    demo: string;
+    source: string;
+    all: string;
+    items: Record<ProjectId, { kind: string; summary: string; detail: string }>;
+    facts: Partial<Record<ProjectId, string[]>>;
+  };
+  oss: {
+    title: string;
+    intro: string;
     merged: string;
     inReview: string;
     changes: Record<string, string>;
-    closing: string;
-    badgeLink: string;
-    closingTail: string;
-    allRepos: string;
+    note: string;
+    profile: string;
   };
-  projects: { mark: string; railLabel: string; title: string; intro: string; blurbs: Record<ProjectId, string>; repoLabel: string; demoLabel: string; allRepos: string };
-  about: {
-    mark: string;
-    railLabel: string;
+  security: {
     title: string;
-    reasonMark: string;
-    reasonRail: string;
+    intro: string;
+    labels: { severity: string; class: string; platform: string; reported: string; status: string };
+    sealedTitle: string;
+    sealed: string;
+    xai: { award: string; summary: string; severity: string; class: string; reported: string; status: string; verify: string };
+    onnx: { award: string; summary: string; severity: string; class: string; reported: string; status: string; verify: string };
+  };
+  about: {
+    title: string;
     lead: string;
     body: string[];
-    pressMark: string;
-    pressRail: string;
-    pressTitle: string;
-    quote: string;
-    quoteSource: string;
-    details: Record<PressId, string>;
-    read: string;
-    note: string;
-    craftMark: string;
-    craftRail: string;
-    craftTitle: string;
-    craftNote: string;
-    craftAreas: { name: string; detail: string }[];
+    stepsTitle: string;
+    steps: { title: string; text: string }[];
+    education: string;
+    press: string;
+    pressLink: string;
   };
-  footer: {
-    mark: string;
+  contact: {
     title: string;
-    blurb: string;
-    labels: { email: string };
-    colophon: string[];
+    text: string;
+    copy: string;
+    copied: string;
+    elsewhere: string;
   };
+  footer: string;
 };
+
+const MESSAGE =
+  'halo kak mau order dong, nama Rina Sari, kirim ke Jl. Melati No.12 Bandung 40123. minta 2 kaos polos hitam size L @85rb sama 1 topi baseball @60rb. bayar transfer BCA. tolong dikirim besok ya. wa 0812-3456-7890 makasih';
 
 const en: Dict = {
   htmlLang: 'en',
-  nav: { index: 'Index', security: 'Security', 'open-source': 'Open source', projects: 'Projects', about: 'About' },
+  ogLocale: 'en_US',
+  meta: {
+    title: 'Aldo Rizona, AI and automation engineer',
+    description:
+      'AI and automation engineer in Padang, Indonesia. LLM tools that quote their sources, agents that ask before they act, a $2,500 bounty from X/xAI, and 7 pull requests merged into WordPress.',
+    ogAlt: 'Aldo Rizona. AI that shows its work, and asks before it acts.',
+  },
   a11y: {
     skip: 'Skip to content',
-    primaryNav: 'Primary',
-    contactNav: 'Contact',
-    langSwitch: 'Language',
-    home: 'Aldo Rizona, home',
+    primary: 'Sections',
+    lang: 'Language',
+    home: 'Aldo Rizona, back to top',
+    details: 'Show details',
   },
-  meta: {
-    index: {
-      title: 'Aldo Rizona, Security Researcher',
-      description:
-        'Final-year Constitutional Law student and self-taught security researcher in Padang, Indonesia. A High severity report rewarded by X/xAI on HackerOne, a published denial-of-service in ONNX, and merged contributions across open source.',
-    },
-    security: {
-      title: 'Security research, Aldo Rizona',
-      description:
-        'Two disclosed findings on major AI platforms: a High severity access-control report rewarded $2,500 by X/xAI on HackerOne, and a published denial-of-service in the ONNX specification via the Expand operator.',
-    },
-    'open-source': {
-      title: 'Open source, Aldo Rizona',
-      description:
-        'Seven pull requests merged into repositories I do not own, including three into WordPress/presence-api and one into the TestSprite CLI.',
-    },
-    projects: {
-      title: 'Projects, Aldo Rizona',
-      description:
-        'Published work only: an offline invoice studio, a prompt-injection training range, and an ops automation kit. Source for each, and a live demo where there is one.',
-    },
-    about: {
-      title: 'About, Aldo Rizona',
-      description:
-        'A final-year Constitutional Law student at UIN Imam Bonjol Padang, writing his thesis, who reads software the way he reads statutes.',
-    },
-  },
+  nav: { work: 'Work', 'open-source': 'Open source', security: 'Security', about: 'About' },
+  emailMe: 'Email me',
   hero: {
-    location: 'Padang, Sumatera Barat, Indonesia',
-    thesis: 'I read systems the way I read statutes, looking for the clause nobody wrote.',
-    stats: [
-      { value: '$2,500', label: 'Bounty rewarded' },
-      { value: '2', label: 'AI platform findings disclosed' },
-      { value: '7', label: 'Merged open-source PRs' },
-    ],
-    enter: 'Read the record',
-  },
-  index: {
-    rows: [
-      { page: 'security', mark: 'Pasal I', title: 'Security', teaser: 'Two findings on two AI platforms. One rewarded, one published. Both verifiable by a stranger.', stat: '$2,500 + 1 published' },
-      { page: 'open-source', mark: 'Pasal II', title: 'Open source', teaser: 'Seven pull requests merged into repositories I do not own, three of them into WordPress.', stat: '7 merged' },
-      { page: 'projects', mark: 'Pasal III', title: 'Projects', teaser: 'A short list on purpose. Only published work, each with source you can open.', stat: '4 published' },
-      { page: 'about', mark: 'Pasal IV', title: 'About', teaser: 'A final-year law student who reads software the way he reads statutes.', stat: 'The reasoning' },
-    ],
-  },
-  security: {
-    mark: 'Pasal I',
-    railLabel: 'Security<br />research',
-    title: 'Two findings, <em>two platforms</em>',
+    lines: ['AI that shows', 'its work, and asks', 'before it acts.'],
     intro:
-      'One paid, one published. I keep the count honest: most of the work returns nothing, and the reports below sit on top of a tall stack of audits that found nothing at all.',
-    methodMark: 'Method',
-    methodRail: 'How I<br />read a system',
-    methodTitle: 'Where the missing sentence <em>hides</em>',
-    method: [
-      'Vulnerabilities are rarely rules that were broken. They are conditions nobody thought to check: the article that omits a case, the definition drawn too narrowly, the procedure that never says who verifies. I read APIs, permission models, and now LLM-driven systems the same way I read a statute, all the way to the part it forgot to cover.',
-      '<strong>Where I spend attention:</strong> broken access control, authorization on object-level operations, resource exhaustion in model runtimes, and the trust boundaries of AI agent tooling, prompt injection included. Places where no automated scanner can tell you what the system was <em>supposed</em> to mean.',
-      '<strong>On disclosure:</strong> I report through official channels and hold the line on what I publish. Where a program forbids describing the weakness, I state only that the finding exists. Where a report is already public, as the ONNX one is, I describe the mechanism openly.',
-    ],
-    specLabels: { severity: 'Severity', class: 'Class', vector: 'Vector', platform: 'Platform', reported: 'Reported', resolution: 'Resolution' },
+      'I’m Aldo Rizona, an AI and automation engineer in Padang, Indonesia. I write the spec and the checks, AI coding agents do much of the building, and I own the review, the tests and what ships.',
+    ctaWork: 'See the work',
+    ctaEmail: 'Email me',
   },
-  findings: {
-    xai: {
-      status: 'Rewarded',
-      award: '$2,500',
-      severity: 'High, CVSS 7.5',
-      cwe: 'Broken access control (IDOR)',
-      vector: 'Network',
-      platform: 'HackerOne',
-      reported: 'January 2026',
-      resolution: 'Resolved',
-      summary:
-        'An access-control flaw on the X / xAI Grok surface, reported through HackerOne, triaged, escalated in severity, and rewarded.',
-      detail:
-        'The program permits me to state that the bounty exists, not to describe the weakness. That restriction outlives the payment, so the mechanism stays sealed. The class is already public through press coverage. The reproduction is not, and will not appear here.',
-      verifyLabel: 'Verify on HackerOne, @xauud',
+  replay: {
+    title: 'Rapikan, replayed',
+    messageLabel: 'Incoming WhatsApp order',
+    message: MESSAGE,
+    recordLabel: 'Structured record',
+    fields: [
+      { label: 'Customer', value: 'Rina Sari', quotes: ['nama Rina Sari'] },
+      { label: 'Items', value: 'Kaos polos hitam (L) × 2, Topi baseball × 1', quotes: ['2 kaos polos hitam size L', '1 topi baseball'] },
+      { label: 'Deliver to', value: 'Jl. Melati No.12, Bandung 40123', quotes: ['kirim ke Jl. Melati No.12 Bandung 40123'] },
+      { label: 'Payment', value: 'Bank transfer (BCA)', quotes: ['bayar transfer BCA'] },
+      { label: 'Ship', value: 'Tomorrow', quotes: ['tolong dikirim besok'] },
+    ],
+    inferred: { label: 'Total', value: 'Rp230.000', note: 'Inferred from line items, not stated' },
+    flag: 'No delivery fee in the message. Ask before confirming.',
+    waiting: 'Waiting for a person. Nothing has been sent.',
+    approve: 'Approve record',
+    stamp: 'Approved',
+    approved: 'Approved by a person. Rapikan never sends anything on its own.',
+    again: 'Replay',
+    caption: 'A replay of Rapikan’s sample order, scripted on this page. Point at a field to see its source.',
+    captionLink: 'Try the live tool',
+  },
+  proof: [
+    { text: '$2,500 bounty from X/xAI for a High-severity access-control report.', link: 'HackerOne profile', href: 'hackerone' },
+    { text: '7 pull requests merged into WordPress Presence API.', link: 'See them on GitHub', href: 'wpMergedSearch' },
+    { text: 'Listed as a contributor to the Presence API plugin on WordPress.org.', link: 'WordPress.org profile', href: 'wordpress' },
+  ],
+  work: {
+    title: 'Work you can open',
+    intro: 'Every project has public source. Three of them run live in your browser right now.',
+    demo: 'Live demo',
+    source: 'Source code',
+    all: 'All repositories on GitHub',
+    items: {
+      handoff: {
+        kind: 'Open-source AI browser agent',
+        summary: 'You log in yourself, a Claude agent drives the browser, and anything sensitive waits for your approval.',
+        detail:
+          'It works from screenshots and indexed page elements instead of hand-written selectors. New actions are plain decorated functions. Approval runs in four modes, from paranoid to dry-run. MIT licensed, 34 automated tests, and it ships a Claude Code skill.',
+      },
+      rapikan: {
+        kind: 'Applied-LLM tool',
+        summary: 'Turns messy business text into structured records. Every field quotes its source, gaps are flagged, and a person approves.',
+        detail:
+          'Six workflows, from WhatsApp orders and support tickets to receipts. It runs in the page with no backend, and your API key never leaves your browser. The replay at the top of this page uses its sample order.',
+      },
+      injectlab: {
+        kind: 'Prompt-injection training range',
+        summary: 'Attack a simulated assistant. Its defence layers tell you what they caught, so you learn to diagnose instead of copying payloads.',
+        detail: 'Runs offline in the browser, with levels, hints and a cheat sheet of technique families.',
+      },
+      ledgerline: {
+        kind: 'Invoice studio',
+        summary: 'Build an invoice and print a clean PDF without uploading anything.',
+        detail: 'One HTML file, no dependencies, works offline. Saved clients stay on your device.',
+      },
+      securetask: {
+        kind: 'Security-first REST API',
+        summary: 'A FastAPI backend that shows how I handle authentication and access control.',
+        detail:
+          'JWT with separate access and refresh tokens, per-object authorization, login rate limiting, and a pytest suite that includes a cross-account test. OpenAPI docs are generated automatically.',
+      },
+      quickops: {
+        kind: 'Ops automation kit',
+        summary: 'Outreach, reply monitoring and delivery workflows for a one-person shop.',
+        detail: 'Python and the Gmail API, wired together so one operator can run like a small team.',
+      },
     },
-    onnx: {
-      status: 'Published',
-      award: 'Disclosure bounty proposed, awaiting review',
-      severity: 'Medium, CVSS 5.5',
-      cwe: 'CWE-400, uncontrolled resource consumption',
-      vector: 'Local, user interaction required',
-      platform: 'huntr (Protect AI / Palo Alto Networks)',
-      reported: 'December 2025',
-      resolution: 'Publicly disclosed, pending review',
-      summary:
-        'A denial-of-service in the ONNX specification and its reference implementation: a crafted model exhausts memory during execution.',
-      detail:
-        'The Expand operator schema never bounds its output dimensions. A model of roughly 183 bytes can broadcast a 1x1 tensor into an astronomically large one, on the order of 300 terabytes, and the runtime tries to allocate it. That crashes inference services which load models automatically. This report is public on huntr, so the mechanism is described openly. The bounty is proposed and still awaiting the maintainers.',
-      verifyLabel: 'Read the full report on huntr',
+    facts: {
+      handoff: ['Log in yourself.', 'Hand the browser to an AI.', 'Approve before it acts.', 'Modes: gated, paranoid, dry-run, yolo'],
+      rapikan: ['Every field quotes its source.', 'Gaps are flagged, not invented.', 'A person approves.', 'Six workflows, no backend'],
+      securetask: ['JWT access and refresh tokens', 'Passwords hashed with bcrypt', 'Other users’ tasks return 404', 'Login: 5 tries per minute per IP', 'OpenAPI docs at /docs'],
+      quickops: ['Outreach', 'Reply monitoring', 'Delivery workflows', 'Gmail API'],
     },
   },
   oss: {
-    mark: 'Pasal II',
-    railLabel: 'Open source<br />record',
-    title: 'Code other people <em>agreed to keep</em>',
+    title: 'Code maintainers kept',
     intro:
-      'Finding a flaw and fixing one are different skills, and only one of them is reviewed by strangers. Every change below was read by a maintainer who had no reason to be generous.',
-    caption: 'Contributions to repositories I do not own',
-    cols: { project: 'Project', pr: 'PR', change: 'Change', state: 'State' },
+      'Pull requests to projects I don’t own, each reviewed by someone with no reason to be generous. Seven landed in WordPress’s Presence API, and WordPress.org lists me as a contributor to the plugin.',
     merged: 'Merged',
     inReview: 'In review',
     changes: {
-      '#213': 'Store presence data as longtext, and compare schema version as an integer.',
+      '#213': 'Store presence data as longtext and compare the schema version as an integer.',
       '#240': 'Add test coverage for cron scheduling.',
       '#258': 'Delete expired presence rows by key in bounded passes.',
+      '#436': 'Run the Jest unit tests in CI.',
+      '#719': 'Show client_id and expiry in the DB viewer.',
+      '#760': 'Move the debugger and DB viewer into a presence-debugger plugin.',
+      '#774': 'Let a site switch off the Active Posts dashboard widget.',
       '#48': 'Bound cursor loops in pagination without dropping empty pages.',
-      '#412': 'Remove a duplicate state hook in the campaign view.',
+      '#13324': 'Align the line height of the update details toggle.',
       '#1335': 'Fix an IndexError crash in the datetime parser on malformed format strings.',
     },
-    closing: 'Seven pull requests have been merged into repositories I do not own. The three in WordPress earned the ',
-    badgeLink: 'Plugin Developer badge',
-    closingTail:
-      ' on WordPress.org. The parser fix in arrow is still open, because under-maintained projects move slowly, and I would rather show the open one than pretend it merged.',
-    allRepos: 'All repositories on GitHub',
+    note: 'Two are still open. They are shown as open, not rounded up.',
+    profile: 'WordPress.org profile',
   },
-  projects: {
-    mark: 'Pasal III',
-    railLabel: 'Things<br />I built',
-    title: 'Built to <em>ship</em>, not to demo',
-    intro:
-      'A short list on purpose. Only work that is published, still standing, and open for you to judge appears here.',
-    blurbs: {
-      rapikan:
-        'A live applied-LLM tool that turns messy business text (orders, tickets, receipts, leads) into structured records, each field backed by a verbatim source quote, gaps flagged, and nothing used without human approval. The model runs in-page; no backend.',
-      ledgerline:
-        'A privacy-first invoice studio that runs entirely in the browser. Build an invoice, print a clean PDF, upload nothing. One file, zero dependencies, works offline.',
-      injectlab:
-        'A training range for prompt injection. Its simulated defence layers label what they caught, so it teaches diagnosis instead of handing over payloads.',
-      quickops:
-        'A zero-budget ops kit for a one-person shop: outreach, reply monitoring, and delivery workflows wired together so one operator runs like a team.',
+  security: {
+    title: 'Security findings',
+    intro: 'I report through official channels. Most audits find nothing. These two found something.',
+    labels: { severity: 'Severity', class: 'Class', platform: 'Platform', reported: 'Reported', status: 'Status' },
+    sealedTitle: 'Sealed',
+    sealed: 'The program lets me say the bounty exists, not how the weakness works. The details stay sealed.',
+    xai: {
+      award: '$2,500 bounty',
+      summary: 'A High-severity access-control flaw on the X/xAI Grok surface, reported through HackerOne, triaged, escalated and rewarded.',
+      severity: 'High, CVSS 7.5',
+      class: 'Broken access control (IDOR)',
+      reported: 'January 2026',
+      status: 'Resolved',
+      verify: 'Verify on HackerOne',
     },
-    repoLabel: 'Source',
-    demoLabel: 'Live',
-    allRepos: 'All repositories on GitHub',
+    onnx: {
+      award: 'Publicly disclosed',
+      summary:
+        'A denial-of-service in the ONNX specification. The Expand operator never bounds its output size, so a model of about 183 bytes can ask the runtime for roughly 300 TB of memory and crash services that load models automatically.',
+      severity: 'Medium, CVSS 5.5',
+      class: 'CWE-400, uncontrolled resource consumption',
+      reported: 'December 2025',
+      status: 'Public on huntr',
+      verify: 'Read the report on huntr',
+    },
   },
   about: {
-    mark: 'Pasal IV',
-    railLabel: 'About',
-    title: 'A law student who <em>breaks things</em> on purpose',
-    reasonMark: 'Reasoning',
-    reasonRail: 'Why the two<br />fit together',
-    lead: 'I am a final-year Constitutional Law student at UIN Imam Bonjol Padang, currently writing my thesis. I also find vulnerabilities in software, and get paid for it.',
+    title: 'I read systems the way I read statutes.',
+    lead: 'I studied Constitutional Law at UIN Imam Bonjol Padang. Law trained one habit I use every day: read a rule to find what it forgot to say.',
     body: [
-      'People treat that as a contradiction. It has never felt like one. Four years of legal training taught me a single stubborn habit: read a rule not to learn what it forbids, but to find what it forgot to mention. The article that omits a condition. The definition drawn too narrowly. The procedure that never says who verifies. Writing a thesis sharpens it further, because you spend months defending every claim against someone whose job is to find the hole in it.',
-      'Software turns out to read exactly the same way. An API is a set of rules about who may reach what. <strong>I do not find bugs because I am a stronger programmer than the people who wrote the code. I find them because I was trained to notice the missing sentence.</strong>',
-      'Everything on this site is self-taught, built out of Padang, and verifiable by someone other than me: a paid report, a published advisory, code that maintainers agreed to keep.',
+      'The article that omits a condition. The definition drawn too narrowly. The procedure that never says who verifies. Software reads the same way. An API is a set of rules about who may reach what, and an AI agent is a set of rules about what it may do without asking.',
+      'That is why the tools I build quote their evidence and stop for a person before acting. It is also how I found the bug X/xAI paid for. All of it is self-taught, and built from Padang.',
     ],
-    pressMark: 'Press',
-    pressRail: 'In the<br />record',
-    pressTitle: 'Told by <em>others</em>',
-    quote:
-      'Banyak orang masih mikir kalau dunia cybersecurity cuma buat anak IT. Padahal faktanya, Aldo Rizona justru datang dari Hukum Tata Negara...',
-    quoteSource: 'ReWork Academy',
-    details: {
-      rework: 'Featured the story in full: a constitutional-law student who found a Grok vulnerability and earned a $2,500 bounty.',
-      codepolitan: 'Picked up the story for its Indonesian developer audience.',
-      coursenet: 'Shared the account as an example for aspiring security learners.',
-      tribun: 'Ran the bounty story in its education coverage.',
-      katasuhukita: 'Reposted the disclosure to a broader audience.',
-    },
-    read: 'Read',
-    note: 'Searching my name returns an AI overview and the coverage above. The vulnerability class is public through that press. The reproduction is not.',
-    craftMark: 'Craft',
-    craftRail: 'What I<br />work in',
-    craftTitle: 'The <em>disciplines</em> behind the record',
-    craftNote:
-      'This site is the shortest proof I can offer: I designed, built, and animated the interface you are reading now, front to back.',
-    craftAreas: [
-      { name: 'Security research', detail: 'Broken access control, LLM and agent security, resource exhaustion.' },
-      { name: 'Interface and UI/UX', detail: 'Design systems, motion, and accessibility. This site included.' },
-      { name: 'Front-end', detail: 'Astro, semantic HTML and CSS, dependency-free vanilla JS.' },
-      { name: 'Back-end and automation', detail: 'Node and Python services, ops tooling, scripting.' },
+    stepsTitle: 'How I work',
+    steps: [
+      { title: 'Write the spec', text: 'What the tool must do, what it must never do, and how we will know it works.' },
+      { title: 'Direct the agents', text: 'AI coding agents write much of the code, inside that spec.' },
+      { title: 'Review and test', text: 'I read the changes, run the tests, and try to break it.' },
+      { title: 'Ship and own it', text: 'If it fails in production, that is on me, not the model.' },
     ],
+    education: 'Sarjana Hukum (Bachelor of Law), Constitutional Law, UIN Imam Bonjol Padang, 2022 to 2026.',
+    press: 'ReWork Academy told the story of a constitutional-law student who found a Grok vulnerability.',
+    pressLink: 'Read the feature',
   },
-  footer: {
-    mark: 'Penutup, closing provisions',
-    title: 'Open for <em>work</em>',
-    blurb:
-      'Freelance security review, interface and front-end work, backend and automation, and junior or internship roles in application security. If a system is interesting, I would rather look at it than talk about it.',
-    labels: { email: 'Email' },
-    colophon: [
-      'Set in Bodoni Moda and IBM Plex. Lattice after Minangkabau songket.',
-      'Built with Astro. Every claim links to something a stranger can check.',
-    ],
+  contact: {
+    title: 'Hiring, or have a workflow to automate?',
+    text: 'I’m open to full-time AI and automation roles, remote or in Indonesia, and to freelance projects. Email is the fastest way to reach me.',
+    copy: 'Copy email',
+    copied: 'Copied',
+    elsewhere: 'Elsewhere',
   },
+  footer: 'Built with Astro and directed with AI coding agents. Every claim on this page links to a source you can check.',
 };
 
 const id: Dict = {
   htmlLang: 'id',
-  nav: { index: 'Beranda', security: 'Keamanan', 'open-source': 'Open source', projects: 'Karya', about: 'Tentang' },
+  ogLocale: 'id_ID',
+  meta: {
+    title: 'Aldo Rizona, AI & automation engineer',
+    description:
+      'AI & automation engineer di Padang. Tool LLM yang mengutip sumbernya, agen yang bertanya sebelum bertindak, bounty $2.500 dari X/xAI, dan 7 pull request yang di-merge ke WordPress.',
+    ogAlt: 'Aldo Rizona. AI yang menunjukkan buktinya, dan bertanya sebelum bertindak.',
+  },
   a11y: {
     skip: 'Lompat ke konten',
-    primaryNav: 'Utama',
-    contactNav: 'Kontak',
-    langSwitch: 'Bahasa',
-    home: 'Aldo Rizona, beranda',
+    primary: 'Bagian',
+    lang: 'Bahasa',
+    home: 'Aldo Rizona, kembali ke atas',
+    details: 'Lihat detail',
   },
-  meta: {
-    index: {
-      title: 'Aldo Rizona, Peneliti Keamanan',
-      description:
-        'Mahasiswa tingkat akhir Hukum Tata Negara dan peneliti keamanan otodidak di Padang, Indonesia. Satu laporan High severity yang dibayar X/xAI lewat HackerOne, satu denial-of-service di ONNX yang sudah dipublikasikan, dan kontribusi yang di-merge di berbagai proyek open source.',
-    },
-    security: {
-      title: 'Riset keamanan, Aldo Rizona',
-      description:
-        'Dua temuan yang sudah diungkap di platform AI besar: laporan kontrol akses High severity yang dibayar $2.500 oleh X/xAI lewat HackerOne, dan denial-of-service pada spesifikasi ONNX melalui operator Expand.',
-    },
-    'open-source': {
-      title: 'Open source, Aldo Rizona',
-      description:
-        'Tujuh pull request yang di-merge ke repositori milik pihak lain, termasuk tiga ke WordPress/presence-api dan satu ke TestSprite CLI.',
-    },
-    projects: {
-      title: 'Karya, Aldo Rizona',
-      description:
-        'Hanya karya yang sudah terbit: studio invoice offline, arena latihan prompt injection, dan kit otomasi operasional. Kode untuk masing-masing, dan demo bila ada.',
-    },
-    about: {
-      title: 'Tentang, Aldo Rizona',
-      description:
-        'Mahasiswa tingkat akhir Hukum Tata Negara di UIN Imam Bonjol Padang yang sedang menyusun skripsi, dan membaca perangkat lunak seperti membaca undang-undang.',
-    },
-  },
+  nav: { work: 'Karya', 'open-source': 'Open source', security: 'Keamanan', about: 'Tentang' },
+  emailMe: 'Kirim email',
   hero: {
-    location: 'Padang, Sumatera Barat, Indonesia',
-    thesis: 'Saya membaca sistem seperti membaca undang-undang, mencari pasal yang tidak pernah ditulis.',
-    stats: [
-      { value: '$2.500', label: 'Bounty dibayar' },
-      { value: '2', label: 'Temuan di platform AI' },
-      { value: '7', label: 'PR open source di-merge' },
-    ],
-    enter: 'Baca catatannya',
-  },
-  index: {
-    rows: [
-      { page: 'security', mark: 'Pasal I', title: 'Keamanan', teaser: 'Dua temuan di dua platform AI. Satu dibayar, satu dipublikasikan. Keduanya bisa dicek orang lain.', stat: '$2.500 + 1 terbit' },
-      { page: 'open-source', mark: 'Pasal II', title: 'Open source', teaser: 'Tujuh pull request di-merge ke repositori milik pihak lain, tiga di antaranya ke WordPress.', stat: '7 di-merge' },
-      { page: 'projects', mark: 'Pasal III', title: 'Karya', teaser: 'Daftarnya sengaja pendek. Hanya karya terbit, masing-masing dengan kode yang bisa dibuka.', stat: '4 terbit' },
-      { page: 'about', mark: 'Pasal IV', title: 'Tentang', teaser: 'Mahasiswa hukum tingkat akhir yang membaca perangkat lunak seperti membaca undang-undang.', stat: 'Alasannya' },
-    ],
-  },
-  security: {
-    mark: 'Pasal I',
-    railLabel: 'Riset<br />keamanan',
-    title: 'Dua temuan, <em>dua platform</em>',
+    lines: ['AI yang menunjukkan', 'buktinya, dan bertanya', 'sebelum bertindak.'],
     intro:
-      'Satu dibayar, satu dipublikasikan. Hitungannya saya jaga tetap jujur: sebagian besar pekerjaan ini tidak menghasilkan apa-apa, dan dua laporan di bawah berdiri di atas tumpukan audit yang hasilnya nol.',
-    methodMark: 'Metode',
-    methodRail: 'Cara saya<br />membaca sistem',
-    methodTitle: 'Tempat kalimat yang hilang <em>bersembunyi</em>',
-    method: [
-      'Kerentanan jarang lahir dari aturan yang dilanggar. Ia lahir dari kondisi yang tidak pernah terpikir untuk diperiksa: pasal yang lupa satu keadaan, definisi yang terlalu sempit, prosedur yang tidak menyebut siapa yang memverifikasi. Saya membaca API, model perizinan, dan kini sistem berbasis LLM dengan cara yang sama seperti membaca undang-undang, sampai ke bagian yang lupa diatur.',
-      '<strong>Fokus perhatian saya:</strong> broken access control, otorisasi pada operasi tingkat objek, kehabisan sumber daya pada runtime model, dan batas kepercayaan pada tooling agent AI, termasuk prompt injection. Tempat-tempat yang tidak bisa dijelaskan pemindai otomatis, karena mesin tidak tahu apa <em>maksud</em> sistemnya.',
-      '<strong>Soal pengungkapan:</strong> saya melapor lewat jalur resmi dan menjaga batas apa yang boleh dipublikasikan. Kalau program melarang menjelaskan kelemahannya, saya hanya menyatakan bahwa temuannya ada. Kalau laporannya sudah publik, seperti yang ONNX, mekanismenya saya jelaskan terbuka.',
-    ],
-    specLabels: { severity: 'Severity', class: 'Kelas', vector: 'Vektor', platform: 'Platform', reported: 'Dilaporkan', resolution: 'Status' },
+      'Saya Aldo Rizona, AI & automation engineer di Padang. Saya menulis spesifikasi dan cara mengujinya, agen AI mengerjakan sebagian besar kodenya, dan saya yang memegang review, pengujian, dan apa yang dirilis.',
+    ctaWork: 'Lihat karya',
+    ctaEmail: 'Kirim email',
   },
-  findings: {
-    xai: {
-      status: 'Dibayar',
-      award: '$2.500',
-      severity: 'High, CVSS 7.5',
-      cwe: 'Broken access control (IDOR)',
-      vector: 'Jaringan',
-      platform: 'HackerOne',
-      reported: 'Januari 2026',
-      resolution: 'Selesai diperbaiki',
-      summary:
-        'Celah kontrol akses pada permukaan Grok milik X / xAI, dilaporkan lewat HackerOne, ditriase, dinaikkan severitasnya, lalu dibayar.',
-      detail:
-        'Program mengizinkan saya menyatakan bahwa bounty-nya ada, bukan menjelaskan kelemahannya. Batasan itu berlaku lebih lama daripada pembayarannya, jadi mekanismenya tetap tertutup. Kelas kerentanannya sudah publik lewat pemberitaan. Langkah reproduksinya tidak, dan tidak akan muncul di sini.',
-      verifyLabel: 'Verifikasi di HackerOne, @xauud',
+  replay: {
+    title: 'Rapikan, diputar ulang',
+    messageLabel: 'Pesanan masuk lewat WhatsApp',
+    message: MESSAGE,
+    recordLabel: 'Record terstruktur',
+    fields: [
+      { label: 'Pelanggan', value: 'Rina Sari', quotes: ['nama Rina Sari'] },
+      { label: 'Barang', value: 'Kaos polos hitam (L) × 2, Topi baseball × 1', quotes: ['2 kaos polos hitam size L', '1 topi baseball'] },
+      { label: 'Kirim ke', value: 'Jl. Melati No.12, Bandung 40123', quotes: ['kirim ke Jl. Melati No.12 Bandung 40123'] },
+      { label: 'Pembayaran', value: 'Transfer bank (BCA)', quotes: ['bayar transfer BCA'] },
+      { label: 'Pengiriman', value: 'Besok', quotes: ['tolong dikirim besok'] },
+    ],
+    inferred: { label: 'Total', value: 'Rp230.000', note: 'Dihitung dari rincian barang, tidak disebut' },
+    flag: 'Ongkir tidak disebut di pesan. Tanyakan dulu sebelum konfirmasi.',
+    waiting: 'Menunggu persetujuan manusia. Belum ada yang dikirim.',
+    approve: 'Setujui record',
+    stamp: 'Disetujui',
+    approved: 'Disetujui oleh manusia. Rapikan tidak pernah mengirim apa pun sendiri.',
+    again: 'Putar ulang',
+    caption: 'Putar ulang contoh pesanan dari Rapikan, dijalankan di halaman ini. Arahkan ke sebuah kolom untuk melihat sumbernya.',
+    captionLink: 'Coba tool aslinya',
+  },
+  proof: [
+    { text: 'Bounty $2.500 dari X/xAI untuk laporan kontrol akses berseveritas High.', link: 'Profil HackerOne', href: 'hackerone' },
+    { text: '7 pull request di-merge ke WordPress Presence API.', link: 'Lihat di GitHub', href: 'wpMergedSearch' },
+    { text: 'Tercatat sebagai kontributor plugin Presence API di WordPress.org.', link: 'Profil WordPress.org', href: 'wordpress' },
+  ],
+  work: {
+    title: 'Karya yang bisa dibuka',
+    intro: 'Semua proyek punya kode sumber publik. Tiga di antaranya bisa langsung dicoba di browser Anda.',
+    demo: 'Demo live',
+    source: 'Kode sumber',
+    all: 'Semua repositori di GitHub',
+    items: {
+      handoff: {
+        kind: 'Agen browser AI open source',
+        summary: 'Anda login sendiri, agen Claude menjalankan browser, dan setiap aksi sensitif menunggu persetujuan Anda.',
+        detail:
+          'Bekerja dari screenshot dan elemen halaman yang diberi indeks, bukan selector yang ditulis manual. Aksi baru cukup berupa fungsi dengan dekorator. Persetujuan punya empat mode, dari paranoid sampai dry-run. Lisensi MIT, 34 tes otomatis, dan sudah termasuk skill Claude Code.',
+      },
+      rapikan: {
+        kind: 'Tool applied-LLM',
+        summary: 'Mengubah teks bisnis yang berantakan jadi record terstruktur. Setiap kolom mengutip sumbernya, yang kosong ditandai, dan manusia yang menyetujui.',
+        detail:
+          'Enam alur kerja, dari order WhatsApp dan tiket support sampai struk. Berjalan di halaman tanpa backend, dan API key Anda tidak pernah keluar dari browser. Putar ulang di bagian atas halaman ini memakai contoh pesanannya.',
+      },
+      injectlab: {
+        kind: 'Arena latihan prompt injection',
+        summary: 'Serang asisten simulasi. Lapisan pertahanannya memberi tahu apa yang mereka tangkap, jadi Anda belajar mendiagnosis, bukan menyalin payload.',
+        detail: 'Berjalan offline di browser, dengan level, petunjuk, dan contekan keluarga teknik serangan.',
+      },
+      ledgerline: {
+        kind: 'Studio invoice',
+        summary: 'Susun invoice dan cetak PDF yang rapi tanpa mengunggah apa pun.',
+        detail: 'Satu berkas HTML, tanpa dependensi, jalan offline. Daftar klien tersimpan di perangkat Anda saja.',
+      },
+      securetask: {
+        kind: 'REST API yang mengutamakan keamanan',
+        summary: 'Backend FastAPI yang menunjukkan cara saya menangani autentikasi dan kontrol akses.',
+        detail:
+          'JWT dengan token akses dan refresh yang terpisah, otorisasi per objek, pembatasan login, dan suite pytest yang mencakup tes lintas akun. Dokumentasi OpenAPI dibuat otomatis.',
+      },
+      quickops: {
+        kind: 'Kit otomasi operasional',
+        summary: 'Alur outreach, pemantauan balasan, dan pengiriman untuk usaha yang dijalankan satu orang.',
+        detail: 'Python dan Gmail API, dirangkai supaya satu orang bisa bekerja seperti tim kecil.',
+      },
     },
-    onnx: {
-      status: 'Terbit',
-      award: 'Disclosure bounty diajukan, menunggu tinjauan',
-      severity: 'Medium, CVSS 5.5',
-      cwe: 'CWE-400, konsumsi sumber daya tak terkendali',
-      vector: 'Lokal, butuh interaksi pengguna',
-      platform: 'huntr (Protect AI / Palo Alto Networks)',
-      reported: 'Desember 2025',
-      resolution: 'Sudah dipublikasikan, menunggu tinjauan',
-      summary:
-        'Denial-of-service pada spesifikasi ONNX dan implementasi rujukannya: sebuah model yang dirancang khusus menghabiskan memori saat dieksekusi.',
-      detail:
-        'Skema operator Expand tidak pernah membatasi dimensi keluarannya. Model berukuran sekitar 183 byte bisa membentangkan tensor 1x1 menjadi tensor yang sangat besar, di kisaran 300 terabyte, lalu runtime mencoba mengalokasikannya. Itu membuat layanan inferensi yang memuat model secara otomatis ikut mati. Laporan ini publik di huntr, jadi mekanismenya saya jelaskan terbuka. Bounty-nya sudah diajukan dan masih menunggu maintainer.',
-      verifyLabel: 'Baca laporan lengkapnya di huntr',
+    facts: {
+      handoff: ['Login sendiri.', 'Serahkan browser ke AI.', 'Setujui sebelum bertindak.', 'Mode: gated, paranoid, dry-run, yolo'],
+      rapikan: ['Setiap kolom mengutip sumbernya.', 'Yang kosong ditandai, bukan dikarang.', 'Manusia yang menyetujui.', 'Enam alur kerja, tanpa backend'],
+      securetask: ['Token akses dan refresh JWT', 'Password di-hash dengan bcrypt', 'Tugas milik orang lain: 404', 'Login: 5 kali per menit per IP', 'Dokumentasi OpenAPI di /docs'],
+      quickops: ['Outreach', 'Pemantauan balasan', 'Alur pengiriman', 'Gmail API'],
     },
   },
   oss: {
-    mark: 'Pasal II',
-    railLabel: 'Rekam jejak<br />open source',
-    title: 'Kode yang <em>diterima</em> orang lain',
+    title: 'Kode yang diterima maintainer',
     intro:
-      'Menemukan celah dan memperbaikinya adalah dua keahlian berbeda, dan hanya satu yang ditinjau orang asing. Setiap perubahan di bawah dibaca maintainer yang tidak punya alasan untuk berbaik hati.',
-    caption: 'Kontribusi ke repositori yang bukan milik saya',
-    cols: { project: 'Proyek', pr: 'PR', change: 'Perubahan', state: 'Status' },
+      'Pull request ke proyek yang bukan milik saya, masing-masing ditinjau orang yang tidak punya alasan untuk berbaik hati. Tujuh masuk ke Presence API milik WordPress, dan WordPress.org mencatat saya sebagai kontributor plugin tersebut.',
     merged: 'Di-merge',
     inReview: 'Ditinjau',
     changes: {
-      '#213': 'Menyimpan data presence sebagai longtext, dan membandingkan versi skema sebagai integer.',
+      '#213': 'Menyimpan data presence sebagai longtext dan membandingkan versi skema sebagai integer.',
       '#240': 'Menambah cakupan tes untuk penjadwalan cron.',
       '#258': 'Menghapus baris presence kedaluwarsa per key dalam batch terbatas.',
+      '#436': 'Menjalankan unit test Jest di CI.',
+      '#719': 'Menampilkan client_id dan waktu kedaluwarsa di DB viewer.',
+      '#760': 'Memindahkan debugger dan DB viewer ke plugin presence-debugger.',
+      '#774': 'Memungkinkan situs mematikan widget dasbor Active Posts.',
       '#48': 'Membatasi cursor loop pada paginasi tanpa membuang halaman kosong.',
-      '#412': 'Menghapus state hook ganda pada tampilan campaign.',
+      '#13324': 'Merapikan tinggi baris tombol detail pembaruan.',
       '#1335': 'Memperbaiki crash IndexError di parser datetime saat format string tidak valid.',
     },
-    closing: 'Tujuh pull request sudah di-merge ke repositori yang bukan milik saya. Tiga yang di WordPress menghasilkan ',
-    badgeLink: 'badge Plugin Developer',
-    closingTail:
-      ' di WordPress.org. Perbaikan parser di arrow masih terbuka, karena proyek yang kurang terawat bergerak lambat, dan saya lebih suka menampilkan yang masih terbuka daripada berpura-pura sudah di-merge.',
-    allRepos: 'Semua repositori di GitHub',
+    note: 'Dua masih terbuka. Ditampilkan apa adanya, tidak dibulatkan ke atas.',
+    profile: 'Profil WordPress.org',
   },
-  projects: {
-    mark: 'Pasal III',
-    railLabel: 'Yang saya<br />bangun',
-    title: 'Dibuat untuk <em>dipakai</em>, bukan dipamerkan',
-    intro:
-      'Daftarnya sengaja pendek. Hanya karya yang sudah terbit, masih berdiri, dan terbuka untuk Anda nilai yang masuk ke sini.',
-    blurbs: {
-      rapikan:
-        'Alat applied-LLM langsung yang mengubah teks bisnis berantakan (order, tiket, struk, lead) menjadi record terstruktur, tiap kolom disertai kutipan sumber persis, kolom kosong ditandai, dan tidak ada yang dipakai tanpa persetujuan manusia. Modelnya jalan di dalam halaman; tanpa backend.',
-      ledgerline:
-        'Studio invoice yang mengutamakan privasi dan berjalan sepenuhnya di browser. Susun invoice, cetak PDF rapi, tanpa mengunggah apa pun. Satu berkas, nol dependensi, jalan offline.',
-      injectlab:
-        'Arena latihan prompt injection. Lapisan pertahanan simulasinya menyebutkan apa yang mereka tangkap, jadi yang diajarkan adalah diagnosis, bukan payload jadi.',
-      quickops:
-        'Kit operasional tanpa modal untuk usaha satu orang: penjangkauan, pemantauan balasan, dan alur pengiriman yang dirangkai supaya satu orang bisa bekerja seperti satu tim.',
+  security: {
+    title: 'Temuan keamanan',
+    intro: 'Saya melapor lewat jalur resmi. Sebagian besar audit tidak menemukan apa-apa. Dua ini menemukan sesuatu.',
+    labels: { severity: 'Severity', class: 'Kelas', platform: 'Platform', reported: 'Dilaporkan', status: 'Status' },
+    sealedTitle: 'Disegel',
+    sealed: 'Program hanya mengizinkan saya menyebut bahwa bounty-nya ada, bukan cara kerja kelemahannya. Detailnya tetap tertutup.',
+    xai: {
+      award: 'Bounty $2.500',
+      summary: 'Celah kontrol akses berseveritas High pada Grok milik X/xAI, dilaporkan lewat HackerOne, ditriase, dinaikkan severitasnya, lalu dibayar.',
+      severity: 'High, CVSS 7.5',
+      class: 'Broken access control (IDOR)',
+      reported: 'Januari 2026',
+      status: 'Selesai diperbaiki',
+      verify: 'Verifikasi di HackerOne',
     },
-    repoLabel: 'Kode',
-    demoLabel: 'Live',
-    allRepos: 'Semua repositori di GitHub',
+    onnx: {
+      award: 'Sudah dipublikasikan',
+      summary:
+        'Denial-of-service pada spesifikasi ONNX. Operator Expand tidak pernah membatasi ukuran keluarannya, sehingga model berukuran sekitar 183 byte bisa meminta memori sekitar 300 TB dan membuat layanan yang memuat model otomatis ikut mati.',
+      severity: 'Medium, CVSS 5.5',
+      class: 'CWE-400, konsumsi sumber daya tak terkendali',
+      reported: 'Desember 2025',
+      status: 'Publik di huntr',
+      verify: 'Baca laporannya di huntr',
+    },
   },
   about: {
-    mark: 'Pasal IV',
-    railLabel: 'Tentang',
-    title: 'Mahasiswa hukum yang <em>merusak</em> dengan sengaja',
-    reasonMark: 'Alasan',
-    reasonRail: 'Kenapa keduanya<br />nyambung',
-    lead: 'Saya mahasiswa tingkat akhir Hukum Tata Negara di UIN Imam Bonjol Padang, sedang menyusun skripsi. Saya juga menemukan kerentanan di perangkat lunak, dan dibayar untuk itu.',
+    title: 'Saya membaca sistem seperti membaca undang-undang.',
+    lead: 'Saya kuliah Hukum Tata Negara di UIN Imam Bonjol Padang. Ilmu hukum menanamkan satu kebiasaan yang saya pakai setiap hari: membaca aturan untuk menemukan apa yang lupa diatur.',
     body: [
-      'Banyak orang menganggap itu bertentangan. Buat saya tidak pernah terasa begitu. Empat tahun belajar hukum menanamkan satu kebiasaan keras kepala: membaca aturan bukan untuk tahu apa yang dilarang, tapi untuk menemukan apa yang lupa disebut. Pasal yang melewatkan satu kondisi. Definisi yang ditarik terlalu sempit. Prosedur yang tidak pernah menyebut siapa yang memverifikasi. Menyusun skripsi mengasah itu lebih jauh, karena berbulan-bulan Anda mempertahankan setiap klaim di depan orang yang tugasnya mencari lubangnya.',
-      'Ternyata perangkat lunak dibaca dengan cara yang persis sama. API adalah kumpulan aturan tentang siapa boleh menjangkau apa. <strong>Saya menemukan bug bukan karena saya programmer yang lebih hebat dari penulis kodenya. Saya menemukannya karena saya dilatih memperhatikan kalimat yang hilang.</strong>',
-      'Semua yang ada di situs ini dipelajari sendiri, dikerjakan dari Padang, dan bisa diverifikasi orang selain saya: laporan yang dibayar, advisory yang terbit, dan kode yang diterima para maintainer.',
+      'Pasal yang melewatkan satu kondisi. Definisi yang ditarik terlalu sempit. Prosedur yang tidak pernah menyebut siapa yang memverifikasi. Perangkat lunak dibaca dengan cara yang sama. API adalah aturan tentang siapa boleh menjangkau apa, dan agen AI adalah aturan tentang apa yang boleh ia lakukan tanpa bertanya.',
+      'Karena itu tool yang saya bangun selalu mengutip buktinya dan berhenti menunggu manusia sebelum bertindak. Dengan cara yang sama saya menemukan bug yang dibayar X/xAI. Semuanya saya pelajari sendiri, dan dikerjakan dari Padang.',
     ],
-    pressMark: 'Liputan',
-    pressRail: 'Dalam<br />catatan',
-    pressTitle: 'Diceritakan <em>orang lain</em>',
-    quote:
-      'Banyak orang masih mikir kalau dunia cybersecurity cuma buat anak IT. Padahal faktanya, Aldo Rizona justru datang dari Hukum Tata Negara...',
-    quoteSource: 'ReWork Academy',
-    details: {
-      rework: 'Memuat ceritanya utuh: mahasiswa hukum tata negara yang menemukan kerentanan di Grok dan mendapat bounty $2.500.',
-      codepolitan: 'Mengangkat ceritanya untuk audiens developer Indonesia.',
-      coursenet: 'Membagikan kisahnya sebagai contoh bagi yang sedang belajar keamanan.',
-      tribun: 'Memuat cerita bounty tersebut di liputan pendidikannya.',
-      katasuhukita: 'Membagikan ulang pengungkapan itu ke audiens yang lebih luas.',
-    },
-    read: 'Baca',
-    note: 'Mencari nama saya memunculkan ringkasan AI dan liputan di atas. Kelas kerentanannya publik lewat pemberitaan itu. Langkah reproduksinya tidak.',
-    craftMark: 'Keahlian',
-    craftRail: 'Yang saya<br />kerjakan',
-    craftTitle: '<em>Disiplin</em> di balik catatan',
-    craftNote:
-      'Situs ini bukti paling ringkas yang bisa saya tunjukkan: saya sendiri yang mendesain, membangun, dan menganimasikan antarmuka yang sedang Anda baca, dari depan sampai belakang.',
-    craftAreas: [
-      { name: 'Riset keamanan', detail: 'Broken access control, keamanan LLM dan agent, kehabisan sumber daya.' },
-      { name: 'Antarmuka dan UI/UX', detail: 'Design system, animasi, dan aksesibilitas. Termasuk situs ini.' },
-      { name: 'Front-end', detail: 'Astro, HTML dan CSS semantik, JavaScript vanilla tanpa dependensi.' },
-      { name: 'Back-end dan otomasi', detail: 'Layanan Node dan Python, tooling operasional, scripting.' },
+    stepsTitle: 'Cara saya bekerja',
+    steps: [
+      { title: 'Tulis spesifikasi', text: 'Apa yang harus dilakukan tool, apa yang tidak boleh, dan bagaimana kita tahu ia berhasil.' },
+      { title: 'Arahkan agen', text: 'Agen AI menulis sebagian besar kodenya, di dalam batas spesifikasi itu.' },
+      { title: 'Review dan uji', text: 'Saya membaca perubahannya, menjalankan tes, dan mencoba merusaknya.' },
+      { title: 'Rilis dan bertanggung jawab', text: 'Kalau gagal di produksi, itu tanggung jawab saya, bukan modelnya.' },
     ],
+    education: 'Sarjana Hukum (S.H.), Hukum Tata Negara, UIN Imam Bonjol Padang, 2022 sampai 2026.',
+    press: 'ReWork Academy menceritakan kisah mahasiswa hukum tata negara yang menemukan kerentanan di Grok.',
+    pressLink: 'Baca liputannya',
   },
-  footer: {
-    mark: 'Penutup, ketentuan penutup',
-    title: 'Terbuka untuk <em>kerja</em>',
-    blurb:
-      'Security review lepas, pekerjaan antarmuka dan front-end, backend dan otomasi, serta peran junior atau magang di keamanan aplikasi. Kalau sebuah sistem menarik, saya lebih suka memeriksanya daripada membicarakannya.',
-    labels: { email: 'Surel' },
-    colophon: [
-      'Huruf Bodoni Moda dan IBM Plex. Kisi bermotif songket Minangkabau.',
-      'Dibangun dengan Astro. Setiap klaim tertaut ke sesuatu yang bisa dicek orang lain.',
-    ],
+  contact: {
+    title: 'Sedang merekrut, atau punya alur kerja yang ingin diotomasi?',
+    text: 'Saya terbuka untuk posisi full-time di bidang AI dan otomasi, remote atau di Indonesia, juga untuk proyek lepas. Email adalah cara tercepat menghubungi saya.',
+    copy: 'Salin email',
+    copied: 'Tersalin',
+    elsewhere: 'Di tempat lain',
   },
+  footer: 'Dibangun dengan Astro dan diarahkan bersama agen AI. Setiap klaim di halaman ini tertaut ke sumber yang bisa Anda cek.',
 };
 
 const DICTS: Record<Lang, Dict> = { en, id };
